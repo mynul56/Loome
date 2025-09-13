@@ -1,0 +1,183 @@
+/* Animation utilities */
+.animate-fade-in {
+  animation: fadeIn 1s ease;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Loomé Brand Colors - Old Money Aesthetic */
+    --background: 45 15% 97%; /* Soft cream background */
+    --foreground: 0 0% 15%; /* Deep charcoal text */
+
+    --card: 45 20% 98%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 45 20% 98%;
+    --popover-foreground: 0 0% 15%;
+
+    --primary: 0 0% 15%; /* Deep charcoal for primary elements */
+    --primary-foreground: 45 20% 98%;
+
+    --secondary: 45 25% 92%; /* Soft beige */
+    --secondary-foreground: 0 0% 15%;
+
+    --muted: 45 18% 94%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 35 45% 65%; /* Muted gold accent */
+    --accent-foreground: 0 0% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 45 20% 98%;
+
+    --border: 45 20% 88%;
+    --input: 45 20% 90%;
+    --ring: 35 45% 65%;
+
+    --radius: 0.375rem;
+    
+    /* Custom Loomé Brand Tokens */
+    --gold: 35 45% 65%; /* Muted gold */
+    --gold-light: 35 35% 75%;
+    --cream: 45 20% 96%;
+    --charcoal: 0 0% 15%;
+    --charcoal-light: 0 0% 25%;
+    
+    /* Typography Scale */
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Elegant Shadows */
+    --shadow-elegant: 0 4px 20px -4px hsl(var(--charcoal) / 0.08);
+    --shadow-soft: 0 2px 8px -2px hsl(var(--charcoal) / 0.05);
+    
+    /* Transitions */
+    --transition-elegant: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode with elegant charcoal tones */
+    --background: 0 0% 8%;
+    --foreground: 45 15% 95%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 45 15% 95%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 45 15% 95%;
+
+    --primary: 45 15% 95%;
+    --primary-foreground: 0 0% 8%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 45 15% 95%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 45 8% 70%;
+
+    --accent: 35 45% 65%;
+    --accent-foreground: 0 0% 8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 45 15% 95%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 35 45% 65%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Elegant scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-accent/30 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent/50;
+  }
+}
+
+@layer components {
+  .elegant-shadow {
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .soft-shadow {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .transition-elegant {
+    transition: var(--transition-elegant);
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}
