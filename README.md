@@ -62,10 +62,35 @@ index.html        # HTML template
 - PostCSS
 - ESLint
 
-## Customization
-- Update branding, colors, and assets in `tailwind.config.ts` and `public/`
-- Add new products or pages in `src/pages/`
-- Extend UI components in `src/components/ui/`
+## Backend API (Node.js + Express + MongoDB)
+
+### Authentication
+- `POST /api/auth/register` — Register a new user
+  - Body: `{ name, email, password }`
+- `POST /api/auth/login` — Login and receive JWT token
+  - Body: `{ email, password }`
+  - Response: `{ token, user }`
+
+### Products
+- `GET /api/products` — Get all products
+- `GET /api/products/:id` — Get product by ID
+
+### Users
+- `GET /api/users` — Get all users
+- `GET /api/users/:id` — Get user by ID
+
+### Orders
+- `GET /api/orders` — Get all orders
+- `GET /api/orders/:id` — Get order by ID
+
+### Contact
+- `POST /api/contact` — Submit contact form
+  - Body: `{ name, email, message }`
+
+### Notes
+- Protected routes (e.g., creating orders) should require JWT in `Authorization` header: `Bearer <token>`
+- Environment variables are managed in `.env` (see backend folder)
+- Database: MongoDB (see `MONGODB_URI` in `.env`)
 
 ## License
 This project is licensed under the MIT License.

@@ -10,6 +10,9 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import ProductPage from "./pages/ProductPage";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
+import AdminProducts from "./pages/AdminProducts";
+import AdminMessages from "./pages/AdminMessages";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +29,9 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/messages" element={<AdminMessages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
