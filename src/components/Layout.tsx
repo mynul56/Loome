@@ -98,7 +98,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div>
               <h3 className="font-heading font-medium mb-4">Connect</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-elegant">Instagram</a></li>
+                <li><a href="https://www.instagram.com/loome.fashion?igsh=MTI5N3cyc2VkbGZkNg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-elegant">Instagram</a></li>
                 <li><a href="#" className="hover:text-primary transition-elegant">Facebook</a></li>
                 <li><a href="mailto:hello@loome.com" className="hover:text-primary transition-elegant">hello@loome.com</a></li>
               </ul>
