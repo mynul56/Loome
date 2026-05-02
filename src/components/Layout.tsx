@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import logoIcon from '@/assets/logo-icon.png';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
+import logoIcon from '@/assets/logo-icon.png';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,8 +10,18 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  };
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -44,13 +54,48 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [isMenuOpen]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative">
-      {/* Top Header - Minimal */}
-      <header className="absolute top-0 w-full z-40 px-4 sm:px-6 lg:px-8 py-6 pointer-events-none">
-        <Link to="/" className="inline-flex items-center space-x-2 transition-elegant hover:opacity-70 pointer-events-auto mix-blend-difference text-white">
-          <img src={logoIcon} alt="Loomé" className="h-8 w-auto brightness-0 invert" />
-          <span className="text-xl font-heading font-medium tracking-tight">Loomé®</span>
-        </Link>
+    <div className="min-h-screen bg-[#111111] flex flex-col relative font-sans text-white selection:bg-white selection:text-black">
+      
+      {/* Top Header - Fourmeta Style */}
+      <header className="absolute top-0 w-full z-50 px-6 lg:px-12 py-8 flex items-start justify-between mix-blend-difference pointer-events-auto">
+        
+        {/* Left Side: Logo & Time */}
+        <div className="flex items-start gap-16 lg:gap-32">
+          <Link to="/" className="text-2xl lg:text-3xl font-medium tracking-tight hover:opacity-70 transition-opacity">
+            Loomé<sup className="text-xs ml-1 opacity-50">®</sup>
+          </Link>
+          
+          <div className="hidden lg:block text-[13px] opacity-70 leading-snug tracking-wide font-medium">
+            BD, Dhaka<br/>
+            {formatTime(currentTime)}
+          </div>
+        </div>
+
+        {/* Center: Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-10 text-[14px] font-medium opacity-90">
+          <Link to="/shop" className="hover:opacity-60 transition-opacity flex items-start gap-1">
+            Shop <sup className="text-[10px] opacity-60 mt-1">(45)</sup>
+          </Link>
+          <Link to="/shop?category=new" className="hover:opacity-60 transition-opacity flex items-start gap-1">
+            New Arrivals <sup className="text-[10px] opacity-60 mt-1">(12)</sup>
+          </Link>
+          <Link to="/about" className="hover:opacity-60 transition-opacity">About us</Link>
+          <Link to="/contact" className="hover:opacity-60 transition-opacity">Contacts</Link>
+        </nav>
+
+        {/* Right Side: Services & Button */}
+        <div className="flex items-center gap-8">
+          <button className="hidden lg:flex items-start gap-1 text-[14px] font-medium opacity-90 hover:opacity-60 transition-opacity">
+            Services <sup className="text-[10px] opacity-60 mt-1">+</sup>
+          </button>
+          <Link 
+            to="/shop" 
+            className="bg-white text-black px-6 py-3 lg:px-8 lg:py-3.5 rounded-full text-[14px] font-medium hover:bg-gray-200 transition-colors flex items-center gap-2"
+          >
+            Discover Collection
+          </Link>
+        </div>
+
       </header>
 
       <main className="flex-1">{children}</main>
@@ -64,7 +109,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Hamburger Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-12 h-12 md:w-14 md:h-14 bg-[#111111]/80 hover:bg-[#222]/90 text-white rounded-[1.25rem] flex items-center justify-center transition-all duration-300 border border-white/5 backdrop-blur-md"
+            className="w-12 h-12 md:w-14 md:h-14 bg-[#111111]/80 hover:bg-[#222]/90 text-white rounded-[1.25rem] flex items-center justify-center transition-all duration-300 border border-white/5 backdrop-blur-md cursor-pointer"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
@@ -81,7 +126,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Action Button */}
           <Link 
             to="/shop" 
-            className="h-12 md:h-14 bg-white/95 text-black px-6 md:px-8 rounded-[1.25rem] flex items-center justify-center font-medium shadow-lg hover:bg-white transition-colors min-w-[200px] backdrop-blur-md"
+            className="h-12 md:h-14 bg-white/95 text-black px-6 md:px-8 rounded-[1.25rem] flex items-center justify-center font-medium shadow-lg hover:bg-white transition-colors min-w-[200px] backdrop-blur-md cursor-pointer"
             onClick={() => setIsMenuOpen(false)}
           >
             <span className="flex items-center space-x-2 whitespace-nowrap text-sm md:text-base">
@@ -115,6 +160,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     key={item.name}
                     to={item.href}
                     className="group flex items-center relative w-fit"
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     <div className={cn(
                       "absolute -left-6 w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 shadow-[0_0_10px_rgba(255,255,255,0.8)]",
@@ -146,7 +192,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Right Grid */}
             <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
               
-              <Link to="/shop?category=new" className="group relative rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] backdrop-blur-md shadow-lg">
+              <Link to="/shop?category=new" onClick={() => setIsMenuOpen(false)} className="group relative rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] backdrop-blur-md shadow-lg">
                 <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-black/80 z-10 transition-opacity group-hover:opacity-70" />
                 <img 
                   src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" 
@@ -164,18 +210,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
               </Link>
 
-              <Link to="/shop?category=mens" className="group relative rounded-[2rem] overflow-hidden bg-white/10 hover:bg-white/15 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] backdrop-blur-md shadow-lg border border-white/20">
+              <Link to="/shop?category=mens" onClick={() => setIsMenuOpen(false)} className="group relative rounded-[2rem] overflow-hidden bg-white/10 hover:bg-white/15 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] backdrop-blur-md shadow-lg border border-white/20">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent z-0 pointer-events-none"></div>
                 <span className="relative z-10 text-white/80 text-sm font-medium tracking-wide drop-shadow-md">45 products</span>
                 <h3 className="relative z-10 text-white text-2xl font-heading pr-4 drop-shadow-md">Men's wear & tailoring</h3>
               </Link>
 
-              <Link to="/shop?category=womens" className="group relative rounded-[2rem] overflow-hidden bg-black/20 hover:bg-black/30 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] border border-white/10 backdrop-blur-md shadow-lg">
+              <Link to="/shop?category=womens" onClick={() => setIsMenuOpen(false)} className="group relative rounded-[2rem] overflow-hidden bg-black/20 hover:bg-black/30 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] border border-white/10 backdrop-blur-md shadow-lg">
                 <span className="text-white/60 text-sm font-medium tracking-wide drop-shadow-md">32 products</span>
                 <h3 className="text-white text-2xl font-heading pr-4 drop-shadow-md">Women's elegant pieces</h3>
               </Link>
 
-              <Link to="/shop?category=accessories" className="group relative rounded-[2rem] overflow-hidden bg-black/20 hover:bg-black/30 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] border border-white/10 backdrop-blur-md shadow-lg">
+              <Link to="/shop?category=accessories" onClick={() => setIsMenuOpen(false)} className="group relative rounded-[2rem] overflow-hidden bg-black/20 hover:bg-black/30 transition-colors p-6 lg:p-8 flex flex-col justify-between aspect-[4/3] sm:aspect-square lg:aspect-auto min-h-[240px] border border-white/10 backdrop-blur-md shadow-lg">
                 <span className="text-white/60 text-sm font-medium tracking-wide drop-shadow-md">18 products</span>
                 <h3 className="text-white text-2xl font-heading pr-4 drop-shadow-md">Premium accessories</h3>
               </Link>

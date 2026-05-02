@@ -1,88 +1,132 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import CountdownTimer from '@/components/CountdownTimer';
-import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import CountdownTimer from '@/components/CountdownTimer';
 import heroShirt1 from '@/assets/hero-shirt-1.png';
 import heroShirt2 from '@/assets/hero-shirt-2.png';
-import logoFull from '@/assets/logo-full.png';
 
 const Index: React.FC = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   const featuredProducts = [
     {
-      id: 'navy-elegance',
-      name: 'Navy Elegance Shirt',
-      price: '৳1500',
-      image: heroShirt1,
+      id: 'argentina-2026',
+      name: 'Argentina 2026 Home Jersey',
+      price: '৳2500',
+      image: heroShirt1, // Placeholder
     },
     {
-      id: 'midnight-classic',
-      name: 'Midnight Classic Shirt',
-      price: '৳1500',
-      image: heroShirt2,
+      id: 'brazil-2026',
+      name: 'Brazil 2026 Away Jersey',
+      price: '৳2500',
+      image: heroShirt2, // Placeholder
     },
-  ];
-
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'FAQ', href: '/faq' },
   ];
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section 
+        className="relative h-screen w-full flex flex-col justify-center overflow-hidden bg-black text-white cursor-none"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        
+        {/* Custom Cursor */}
+        <div 
+          className={`fixed top-0 left-0 pointer-events-none z-[999] transition-opacity duration-300 flex items-center justify-center w-24 h-24 rounded-full border border-[#10b981] bg-black/20 backdrop-blur-md text-[#10b981] shadow-lg ${isHovering ? 'opacity-100' : 'opacity-0'}`}
+          style={{ 
+            transform: `translate3d(${mousePosition.x - 48}px, ${mousePosition.y - 48}px, 0)`,
+            willChange: 'transform'
+          }}
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+
+        {/* Background Video */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
         >
           <source src="/bgvdo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <div className="mb-8">
-            <img
-              src={logoFull}
-              alt="Loomé - Timeless Elegance"
-              className="h-24 md:h-32 mx-auto mb-6 opacity-90"
-            />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-light mb-6 text-balance">
-            Timeless
-            <br />
-            <span className="font-medium text-primary">Elegance</span>
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        {/* Main Massive Typography */}
+        <div className="relative z-10 px-6 lg:px-12 w-full max-w-[1800px] mx-auto mt-12">
+          <h1 className="text-[12vw] sm:text-[10vw] lg:text-[8.5vw] leading-[0.9] font-heading font-light tracking-tight mix-blend-overlay">
+            We craft jerseys and <br className="hidden md:block"/>
+            football legacies <span className="inline-block align-middle h-[3px] w-12 md:w-24 bg-white/50 mx-2 lg:mx-6"></span> made today, worn <br className="hidden md:block"/>
+            for 2026
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-balance">
-            Discover the art of understated luxury. Premium clothing rooted in the old money aesthetic,
-            where quality craftsmanship meets timeless sophistication.
+        </div>
+
+        {/* Bottom Left Text */}
+        <div className="absolute bottom-12 lg:bottom-16 left-6 lg:left-12 z-20 pointer-events-none">
+          <p className="text-[11px] lg:text-[13px] tracking-[0.1em] text-white/50 font-medium uppercase">
+            Full-service digital powerhouse
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link to="/shop">Discover Collection</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-accent text-accent hover:bg-accent/10">
-              <Link to="/about">Our Story</Link>
-            </Button>
+        </div>
+
+        {/* Bottom Right Card */}
+        <div className="absolute bottom-12 lg:bottom-16 right-6 lg:right-12 z-20 hidden md:block cursor-auto">
+          <div className="bg-[#EAE4D9] text-black rounded-xl p-8 lg:p-10 max-w-[480px] flex gap-8 items-start shadow-2xl hover:scale-[1.02] transition-transform duration-300">
+            <h3 className="font-heading text-3xl leading-tight w-1/2">
+              Official 2026 Gear
+            </h3>
+            <div className="w-1/2 flex flex-col justify-between min-h-[120px]">
+              <p className="text-sm font-medium leading-relaxed">
+                <span className="mr-3 opacity-50 text-xs">01</span>
+                Premium quality authentic jerseys crafted for the ultimate World Cup experience.
+              </p>
+              <button className="w-8 h-8 mt-6 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white transition-colors">
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Bottom Progress Bar */}
+        <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/20 z-20 flex">
+          {/* Active Progress */}
+          <div className="h-full bg-white w-1/4"></div>
+          
+          {/* Segment Dividers */}
+          <div className="absolute top-0 bottom-0 left-[25%] w-[1px] bg-black/40"></div>
+          <div className="absolute top-0 bottom-0 left-[50%] w-[1px] bg-black/40"></div>
+          <div className="absolute top-0 bottom-0 left-[75%] w-[1px] bg-black/40"></div>
+        </div>
+
       </section>
 
       {/* Featured Products */}
       <section className="py-20 bg-secondary/10">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-heading font-medium mb-4">New Collection</h2>
+            <h2 className="text-4xl font-heading font-medium mb-4">World Cup Collection</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-balance">
-              Each piece is crafted with meticulous attention to detail,
-              embodying our commitment to timeless elegance and superior quality.
+              Official premium jerseys crafted for the 2026 tournament.
+              Show your colors and wear your pride with unparalleled quality.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
@@ -121,16 +165,15 @@ const Index: React.FC = () => {
       {/* About Preview */}
       <section className="py-20 bg-accent/5">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-heading font-medium mb-6">The Loomé Philosophy</h2>
+          <h2 className="text-4xl font-heading font-medium mb-6">The Loomé FIFA Experience</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto text-balance leading-relaxed">
-            More than a fashion brand, Loomé represents a cultural statement.
-            We believe in the power of understated luxury, where true elegance
-            lies not in ostentation, but in the quiet confidence of impeccable craftsmanship
-            and timeless design.
+            More than just jerseys, we represent the global passion for football.
+            As we approach 2026, we're dedicated to bringing you the highest quality,
+            authentic gear to support your nation in style.
           </p>
           <div className="flex flex-wrap justify-center gap-8 text-sm text-accent font-medium">
-            <span>• MINIMAL</span>
-            <span>• CLASSIC</span>
+            <span>• AUTHENTIC</span>
+            <span>• PREMIUM</span>
             <span>• ETERNAL</span>
           </div>
           <div className="mt-8">
@@ -140,6 +183,7 @@ const Index: React.FC = () => {
           </div>
         </div>
       </section>
+
     </Layout>
   );
 };
