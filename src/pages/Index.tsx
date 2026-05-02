@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CountdownTimer from '@/components/CountdownTimer';
 import { Button } from '@/components/ui/button';
+import { ArrowUpRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import heroShirt1 from '@/assets/hero-shirt-1.png';
 import heroShirt2 from '@/assets/hero-shirt-2.png';
 import logoFull from '@/assets/logo-full.png';
@@ -21,6 +23,14 @@ const Index: React.FC = () => {
       price: '৳1500',
       image: heroShirt2,
     },
+  ];
+
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'FAQ', href: '/faq' },
   ];
 
   return (
