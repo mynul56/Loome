@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LiveScoreTicker: React.FC = () => {
   const scores = [
@@ -18,7 +19,7 @@ const LiveScoreTicker: React.FC = () => {
       <div className="flex animate-marquee whitespace-nowrap items-center">
         {/* Duplicate scores for infinite loop */}
         {[...scores, ...scores].map((match, idx) => (
-          <div key={idx} className="flex items-center gap-4 px-8 border-r border-black/20">
+          <Link to="/live" key={idx} className="flex items-center gap-4 px-8 border-r border-black/20 hover:bg-black/5 transition-colors cursor-pointer">
             <span className="text-[10px] font-black bg-black text-primary px-1.5 py-0.5 rounded italic">
               {match.competition || 'WC26'}
             </span>
@@ -35,7 +36,7 @@ const LiveScoreTicker: React.FC = () => {
             {match.status === 'LIVE' && (
               <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-ping"></span>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>
