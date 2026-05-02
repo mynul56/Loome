@@ -1,48 +1,71 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Trophy, Users, Timer, TrendingUp, ChevronRight } from 'lucide-react';
+import FootballLoader from '@/components/FootballLoader';
+import { aiService } from '@/services/ai.service';
+import { Timer, Brain, Trophy, TrendingUp } from 'lucide-react';
 
 const LiveScores: React.FC = () => {
-  const activeMatches = [
-    { 
-      competition: "FIFA World Cup 2026 - Qualifiers", 
-      home: "Argentina", away: "Brazil", 
-      homeScore: 2, awayScore: 1, 
-      time: "82'", 
-      status: "LIVE",
-      stadium: "Estádio do Maracanã",
-      stats: { homePos: "52%", awayPos: "48%", homeShots: 12, awayShots: 9 }
-    },
-    { 
-      competition: "UEFA Champions League - Quarter Finals", 
-      home: "Real Madrid", away: "Man City", 
-      homeScore: 2, awayScore: 2, 
-      time: "70'", 
-      status: "LIVE",
-      stadium: "Santiago Bernabéu",
-      stats: { homePos: "45%", awayPos: "55%", homeShots: 8, awayShots: 15 }
-    },
-    { 
-      competition: "FIFA World Cup 2026 - Qualifiers", 
-      home: "France", away: "England", 
-      homeScore: 0, awayScore: 0, 
-      time: "24'", 
-      status: "LIVE",
-      stadium: "Stade de France",
-      stats: { homePos: "50%", awayPos: "50%", homeShots: 4, awayShots: 3 }
-    }
-  ];
+  const [activeMatches, setActiveMatches] = React.useState<any[]>([]);
+  const [finishedMatches, setFinishedMatches] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [previews, setPreviews] = React.useState<Record<number, string>>({});
+  const [loadingPreview, setLoadingPreview] = React.useState<number | null>(null);
 
-  const finishedMatches = [
-    { competition: "WC Qualifiers", home: "Germany", away: "Italy", score: "3 - 3", date: "TODAY" },
-    { competition: "UCL", home: "Liverpool", away: "Barcelona", score: "4 - 0", date: "YESTERDAY" },
-    { competition: "WC Qualifiers", home: "Japan", away: "South Korea", score: "2 - 0", date: "TODAY" }
-  ];
+  React.useEffect(() => {
+    const loadMatchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await aiService.getLiveMatchData();
+        if (data && data.active && data.active.length > 0) {
+          setActiveMatches(data.active);
+          setFinishedMatches(data.finished || []);
+        } else {
+          // Fallback to demo data if AI fails
+          setActiveMatches([
+            { competition: "WC 2026 Qualifiers", home: "Argentina", away: "Brazil", homeScore: 2, awayScore: 1, time: "82'", status: "LIVE", stadium: "Maracanã", stats: { homePos: "52%", awayPos: "48%", homeShots: 12, awayShots: 9 } },
+            { competition: "UCL", home: "Real Madrid", away: "Man City", homeScore: 2, awayScore: 2, time: "70'", status: "LIVE", stadium: "Bernabéu", stats: { homePos: "45%", awayPos: "55%", homeShots: 8, awayShots: 15 } },
+            { competition: "WC 2026 Qualifiers", home: "France", away: "England", homeScore: 0, awayScore: 0, time: "24'", status: "LIVE", stadium: "Stade de France", stats: { homePos: "50%", awayPos: "50%", homeShots: 4, awayShots: 3 } }
+          ]);
+          setFinishedMatches([
+            { competition: "WC Qualifiers", home: "Germany", away: "Italy", score: "3 - 3", date: "TODAY" },
+            { competition: "UCL", home: "Liverpool", away: "Barcelona", score: "4 - 0", date: "TODAY" }
+          ]);
+        }
+      } catch (err) {
+        console.error("Failed to load matches", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadMatchData();
+  }, []);
+
+  const fetchPreview = async (idx: number, home: string, away: string, competition: string) => {
+    setLoadingPreview(idx);
+    const preview = await aiService.getMatchPreview(home, away, competition);
+    setPreviews(prev => ({ ...prev, [idx]: preview }));
+    setLoadingPreview(null);
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-black">
+          <FootballLoader text="Fetching Match Data..." />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <div className="bg-gray-100 min-h-screen pb-24">
+        {isLoading && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center">
+            <FootballLoader text="Fetching Match Intelligence..." />
+          </div>
+        )}
         {/* Live Header */}
         <div className="bg-black text-white pt-24 pb-16 px-6 lg:px-12 border-b-8 border-primary relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -skew-x-12 transform translate-x-20"></div>
@@ -114,6 +137,27 @@ const LiveScores: React.FC = () => {
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Stadium</p>
                     <p className="font-bold text-xs uppercase text-primary">{match.stadium}</p>
                   </div>
+                </div>
+
+                {/* AI Tactical Preview */}
+                <div className="bg-gray-50 p-4 border-t-2 border-gray-100">
+                  {previews[idx] ? (
+                    <div className="flex gap-3 items-start animate-fade-in">
+                      <Brain className="w-5 h-5 text-primary bg-black p-1 shrink-0" />
+                      <p className="text-[10px] font-bold uppercase tracking-tight leading-relaxed italic text-gray-600">
+                        {previews[idx]}
+                      </p>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => fetchPreview(idx, match.home, match.away, match.competition)}
+                      disabled={loadingPreview === idx}
+                      className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+                    >
+                      <Brain className={`w-4 h-4 ${loadingPreview === idx ? 'animate-spin' : ''}`} />
+                      {loadingPreview === idx ? 'Analyzing Tactics...' : 'Request AI Tactical Analysis'}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
