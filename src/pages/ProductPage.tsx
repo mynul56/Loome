@@ -1,252 +1,214 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import heroShirt1 from '@/assets/hero-shirt-1.png';
-import heroShirt2 from '@/assets/hero-shirt-2.png';
+import { ArrowLeft, Check, ShieldCheck, Zap } from 'lucide-react';
+import { productService } from '@/services/product.service';
+import { Product } from '@/services/db';
 
 const ProductPage: React.FC = () => {
-  const { id } = useParams();
-  const { toast } = useToast();
-  const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [quantity, setQuantity] = useState<number>(1);
+  const [activeImage, setActiveImage] = useState<string>('');
 
-  // Mock product data - in real app, this would come from an API
-  const products: Record<string, any> = {
-    'navy-elegance': {
-      id: 'navy-elegance',
-      name: 'Navy Elegance Shirt',
-      price: 1500,
-      description: 'A masterpiece of understated luxury, crafted from the finest Italian cotton with meticulous attention to detail. This classic shirt embodies our philosophy of timeless elegance.',
-      images: [heroShirt1, heroShirt1, heroShirt1],
-      colors: ['Navy', 'Charcoal', 'Cream'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      details: [
-        'Premium Italian cotton fabric',
-        'Mother-of-pearl buttons',
-        'Classic collar with reinforced placket',
-        'French seams for durability',
-        'Tailored fit with elegant drape'
-      ],
-      fabric: '100% Premium Italian Cotton',
-      care: 'Dry clean or gentle machine wash',
-      fit: 'Classic tailored fit'
-    },
-    'midnight-classic': {
-      id: 'midnight-classic',
-      name: 'Midnight Classic Shirt',
-      price: 1500,
-      description: 'An iconic piece that transcends trends, featuring impeccable tailoring and luxurious fabric. Perfect for both professional settings and elegant evenings.',
-      images: [heroShirt2, heroShirt2, heroShirt2],
-      colors: ['Midnight Blue', 'Olive', 'Charcoal'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      details: [
-        'Luxurious cotton-silk blend',
-        'Hand-finished buttonholes',
-        'Spread collar design',
-        'Reinforced stress points',
-        'Contemporary slim fit'
-      ],
-      fabric: '90% Cotton, 10% Silk',
-      care: 'Dry clean recommended',
-      fit: 'Contemporary slim fit'
-    }
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!id) return;
+      try {
+        const data = await productService.getProductById(id);
+        setProduct(data);
+        if (data && data.sizes.length > 0) {
+          setSelectedSize(data.sizes[0]);
+        }
+        if (data && data.images.length > 0) {
+          setActiveImage(data.images[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load product", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadProduct();
+  }, [id]);
+
+  const handleOrder = () => {
+    if (!product) return;
+    navigate('/checkout', { 
+      state: { 
+        productId: product.id, 
+        selectedSize, 
+        quantity 
+      } 
+    });
   };
 
-  const product = products[id || ''];
-
-  if (!product) {
+  if (isLoading) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <h1 className="text-4xl font-heading font-medium mb-4">Product Not Found</h1>
-          <p className="text-muted-foreground">The product you're looking for doesn't exist.</p>
+        <div className="h-[70vh] flex flex-col items-center justify-center text-black">
+          <Zap className="w-12 h-12 text-primary animate-pulse mb-4" />
+          <h2 className="text-4xl font-heading uppercase animate-pulse">Loading Kit...</h2>
         </div>
       </Layout>
     );
   }
 
-  const handleAddToCart = () => {
-    if (!selectedSize || !selectedColor) {
-      toast({
-        title: "Please select options",
-        description: "Please select both size and color before adding to cart.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} in ${selectedColor}, size ${selectedSize} has been added to your cart.`,
-    });
-  };
-
-  const handlePreOrder = () => {
-    if (!selectedSize || !selectedColor) {
-      toast({
-        title: "Please select options",
-        description: "Please select both size and color before pre-ordering.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "Pre-Order Placed",
-      description: "Thank you for your pre-order! You'll be notified when your item ships on September 20, 2025.",
-    });
-  };
+  if (!product) {
+    return (
+      <Layout>
+        <div className="pt-32 pb-20 text-center">
+          <h1 className="text-6xl font-heading uppercase text-black mb-6">Kit Not Found</h1>
+          <Link to="/shop" className="bg-black text-white px-8 py-4 font-bold uppercase hover:bg-primary hover:text-black transition-colors">
+            Return to Pitch
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 py-12" aria-label="Product details">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Product Images */}
-          <div className="space-y-4">
-            <div className="aspect-[3/4] bg-card rounded-lg overflow-hidden elegant-shadow">
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="w-full h-full object-cover animate-fade-in"
-                loading="lazy"
-              />
-            </div>
+      <div className="bg-gray-100 min-h-screen pb-20">
+        
+        {/* Top Breadcrumb Bar */}
+        <div className="bg-black text-white px-6 lg:px-12 py-4 flex items-center justify-between border-b-4 border-primary">
+          <Link to="/shop" className="inline-flex items-center text-sm font-bold uppercase hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Shop
+          </Link>
+          <span className="font-heading uppercase text-gray-500 tracking-widest">{product.team}</span>
+        </div>
+
+        <div className="px-6 lg:px-12 max-w-[1600px] mx-auto mt-12">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 bg-white p-6 lg:p-12 sport-shadow border-4 border-black">
             
-            <div className="grid grid-cols-3 gap-4">
-              {product.images.slice(1, 4).map((image: string, index: number) => (
-                <div key={index} className="aspect-square bg-card rounded-lg overflow-hidden soft-shadow cursor-pointer hover:shadow-md transition-elegant animate-fade-in-up delay-[${index * 100}ms]">
-                  <img
-                    src={image}
-                    alt={`${product.name} view ${index + 2}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Product Details */}
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-heading font-medium mb-4">{product.name}</h1>
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-3xl font-heading font-light">${product.price}</span>
-                <Badge variant="secondary" className="bg-accent/10 text-accent">Pre-Order</Badge>
+            {/* Images Column */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="aspect-[4/5] bg-gray-50 border-4 border-black relative overflow-hidden flex items-center justify-center">
+                {product.discountPrice && (
+                  <div className="absolute top-6 left-6 z-10 bg-primary text-black font-heading text-2xl uppercase px-4 py-1 transform -skew-x-12 border-2 border-black">
+                    SALE
+                  </div>
+                )}
+                <img 
+                  src={activeImage || 'https://via.placeholder.com/600x800/111/FFF?text=KIT'} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                {product.description}
-              </p>
-            </div>
-
-            {/* Product Options */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-3">Color</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {product.colors.map((color: string) => (
-                    <Button
-                      key={color}
-                      variant={selectedColor === color ? "default" : "outline"}
-                      onClick={() => setSelectedColor(color)}
-                      className="justify-start"
-                    >
-                      {color}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-3">Size</label>
-                <Select value={selectedSize} onValueChange={setSelectedSize}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {product.sizes.map((size: string) => (
-                      <SelectItem key={size} value={size}>
-                        {size}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-3">Quantity</label>
-                <Select value={quantity.toString()} onValueChange={(value) => setQuantity(parseInt(value))}>
-                  <SelectTrigger className="w-24">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <SelectItem key={num} value={num.toString()}>
-                        {num}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <Button 
-                onClick={handlePreOrder} 
-                size="lg" 
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-              >
-                Pre-Order Now - Ships Sept 20, 2025
-              </Button>
               
-              <Button 
-                onClick={handleAddToCart} 
-                variant="outline" 
-                size="lg" 
-                className="w-full border-primary text-primary hover:bg-primary/5"
-              >
-                Add to Cart
-              </Button>
+              {/* Thumbnails */}
+              {product.images.length > 1 && (
+                <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+                  {product.images.map((img, i) => (
+                    <button 
+                      key={i}
+                      onClick={() => setActiveImage(img)}
+                      className={`flex-shrink-0 w-24 h-32 border-4 transition-all ${activeImage === img ? 'border-primary' : 'border-gray-200 hover:border-black'}`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Product Details */}
-            <div className="space-y-6 pt-8 border-t border-border/50">
-              <div>
-                <h3 className="font-heading font-medium mb-3">Details</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {product.details.map((detail: string, index: number) => (
-                    <li key={index}>• {detail}</li>
-                  ))}
-                </ul>
+            {/* Details Column */}
+            <div className="lg:col-span-6 flex flex-col justify-center">
+              
+              <div className="mb-8 border-b-4 border-black pb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="bg-black text-white px-3 py-1 font-bold text-xs uppercase tracking-widest">{product.team}</span>
+                  <span className="bg-gray-200 text-black px-3 py-1 font-bold text-xs uppercase tracking-widest">{product.type} KIT</span>
+                </div>
+                
+                <h1 className="text-5xl lg:text-7xl font-heading uppercase leading-[0.9] mb-6 text-black">
+                  {product.name}
+                </h1>
+                
+                <div className="flex gap-4 items-end font-jersey">
+                  {product.discountPrice ? (
+                    <>
+                      <span className="text-6xl font-bold text-red-600 leading-none">৳{product.discountPrice}</span>
+                      <span className="text-3xl text-gray-400 line-through leading-none mb-1">৳{product.price}</span>
+                    </>
+                  ) : (
+                    <span className="text-6xl font-bold text-black leading-none">৳{product.price}</span>
+                  )}
+                </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-6">
+              <div className="mb-10">
+                <p className="text-lg text-gray-600 font-medium leading-relaxed">
+                  {product.fullDescription || product.shortDescription}
+                </p>
+              </div>
+
+              <div className="space-y-8 mb-10 bg-gray-50 p-8 border-2 border-dashed border-gray-300">
+                {/* Size Selector */}
                 <div>
-                  <h4 className="font-medium mb-2">Fabric</h4>
-                  <p className="text-sm text-muted-foreground">{product.fabric}</p>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-heading text-2xl uppercase">Select Size</span>
+                    <button className="text-sm font-bold text-black border-b-2 border-black hover:text-primary hover:border-primary transition-colors">Size Guide</button>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`w-16 h-16 flex items-center justify-center font-heading text-2xl transition-all border-4 transform hover:-translate-y-1
+                          ${selectedSize === size 
+                            ? 'border-primary bg-black text-white shadow-[4px_4px_0px_0px_#D4FF00]' 
+                            : 'border-black bg-white text-black hover:shadow-[4px_4px_0px_0px_#000]'}`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                
+
+                {/* Quantity */}
                 <div>
-                  <h4 className="font-medium mb-2">Care</h4>
-                  <p className="text-sm text-muted-foreground">{product.care}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Fit</h4>
-                  <p className="text-sm text-muted-foreground">{product.fit}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Returns</h4>
-                  <p className="text-sm text-muted-foreground">30-day return policy</p>
+                  <span className="font-heading text-2xl uppercase block mb-4">Quantity</span>
+                  <div className="flex items-center border-4 border-black w-max bg-white">
+                    <button 
+                      className="w-14 h-14 flex items-center justify-center hover:bg-black hover:text-white transition-colors font-heading text-3xl"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    >-</button>
+                    <div className="w-16 h-14 flex items-center justify-center font-jersey text-3xl border-x-4 border-black bg-gray-50">
+                      {quantity}
+                    </div>
+                    <button 
+                      className="w-14 h-14 flex items-center justify-center hover:bg-primary hover:text-black transition-colors font-heading text-3xl"
+                      onClick={() => setQuantity(quantity + 1)}
+                    >+</button>
+                  </div>
                 </div>
               </div>
+
+              <button 
+                onClick={handleOrder}
+                disabled={!product.inStock}
+                className="w-full bg-primary text-black py-6 border-4 border-black font-heading text-3xl uppercase tracking-wider hover:bg-black hover:text-white transition-all transform hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed mb-4 flex items-center justify-center gap-3"
+              >
+                {product.inStock ? 'Checkout Securely' : 'Sold Out'} <ArrowRight className="w-8 h-8" />
+              </button>
+              
+              <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t-2 border-gray-200">
+                <div className="flex flex-col items-center text-center p-4 bg-gray-50">
+                  <ShieldCheck className="w-8 h-8 mb-2 text-black" />
+                  <span className="font-bold text-sm uppercase">100% Authentic</span>
+                </div>
+                <div className="flex flex-col items-center text-center p-4 bg-gray-50">
+                  <Zap className="w-8 h-8 mb-2 text-black" />
+                  <span className="font-bold text-sm uppercase">Fast Delivery</span>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

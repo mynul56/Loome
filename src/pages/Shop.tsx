@@ -1,137 +1,172 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import heroShirt1 from '@/assets/hero-shirt-1.png';
-import heroShirt2 from '@/assets/hero-shirt-2.png';
+import { productService } from '@/services/product.service';
+import { Product } from '@/services/db';
+import { Filter, Search } from 'lucide-react';
 
 const Shop: React.FC = () => {
-  const [sortBy, setSortBy] = useState('featured');
-  const [filterBy, setFilterBy] = useState('all');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Filters
+  const [selectedTeam, setSelectedTeam] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await productService.getAllProducts(true); // only active
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (err) {
+        console.error("Failed to load products", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
-  const products = [
-      {
-        id: 'navy-elegance',
-        name: 'Navy Elegance Shirt',
-        price: '৳1500',
-        image: heroShirt1,
-        category: 'shirts',
-        colors: ['Navy', 'Charcoal'],
-        sizes: ['S', 'M', 'L', 'XL'],
-      },
-      {
-        id: 'midnight-classic',
-        name: 'Midnight Classic Shirt',
-        price: '৳1500',
-        image: heroShirt2,
-        category: 'shirts',
-        colors: ['Midnight Blue', 'Olive'],
-        sizes: ['S', 'M', 'L', 'XL'],
-      },
-    // Add more products as needed
-  ];
+  useEffect(() => {
+    let result = products;
+    if (selectedTeam !== 'All') {
+      result = result.filter(p => p.team === selectedTeam);
+    }
+    if (searchQuery.trim() !== '') {
+      result = result.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        p.team.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    setFilteredProducts(result);
+  }, [selectedTeam, searchQuery, products]);
 
-  const filteredProducts = products.filter(product => {
-    if (filterBy === 'all') return true;
-    return product.category === filterBy;
-  });
+  const teams = ['All', ...Array.from(new Set(products.map(p => p.team)))].sort();
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-12" aria-label="Shop Collection">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-heading font-medium mb-4">Shop Collection</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-balance">
-            Discover our curated selection of timeless pieces, each crafted with uncompromising attention to detail.
-          </p>
-        </div>
-
-        {/* Filters & Sort */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-          <div className="flex gap-4">
-            <Select value={filterBy} onValueChange={setFilterBy}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Filter by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Products</SelectItem>
-                <SelectItem value="shirts">Shirts</SelectItem>
-                <SelectItem value="new">New Arrivals</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
-            </span>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="featured">Featured</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.map((product, idx) => (
-            <Link
-              key={product.id}
-              to={`/product/${product.id}`}
-              className={`group block space-y-4 transition-elegant animate-fade-in-up delay-[${idx * 100}ms]`}
-              aria-label={`View details for ${product.name}`}
-            >
-              <div className="aspect-[3/4] bg-card rounded-lg overflow-hidden elegant-shadow group-hover:shadow-lg transition-elegant">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-elegant duration-500"
-                  loading="lazy"
+      <div className="bg-gray-100 min-h-screen pb-24">
+        {/* Shop Header */}
+        <div className="bg-black text-white pt-16 pb-12 px-6 lg:px-12 border-b-8 border-primary">
+          <div className="max-w-[1800px] mx-auto">
+            <h1 className="text-5xl md:text-7xl font-heading uppercase tracking-tighter mb-8">
+              Kits <span className="text-primary">2026</span>
+            </h1>
+            
+            <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+              {/* Search */}
+              <div className="relative w-full md:w-96">
+                <input 
+                  type="text" 
+                  placeholder="SEARCH KITS OR NATIONS..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-secondary text-white font-bold uppercase text-sm px-12 py-4 focus:outline-none focus:ring-2 focus:ring-primary placeholder-gray-500"
                 />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-heading font-medium group-hover:text-accent transition-elegant">
-                  {product.name}
-                </h3>
-                <p className="text-lg text-muted-foreground">{product.price}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1">
-                    {product.colors.slice(0, 3).map((color, index) => (
-                      <span
-                        key={index}
-                        className="text-xs text-muted-foreground"
-                      >
-                        {color}{index < product.colors.length - 1 && index < 2 ? ', ' : ''}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {product.sizes.length} sizes
-                  </div>
-                </div>
+
+              {/* Stats */}
+              <div className="font-heading text-2xl uppercase tracking-wider text-gray-400">
+                <span className="text-white">{filteredProducts.length}</span> KITS FOUND
               </div>
-            </Link>
-          ))}
+            </div>
+          </div>
         </div>
 
-        {/* Coming Soon */}
-        <div className="mt-16 text-center bg-secondary/20 rounded-lg p-12">
-          <h3 className="text-2xl font-heading font-medium mb-4">More Pieces Coming Soon</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Our full collection launches September 20, 2025. Be the first to discover new arrivals.
-          </p>
-          <Button variant="outline" className="border-accent text-accent hover:bg-accent/10">
-            Notify Me
-          </Button>
+        <div className="max-w-[1800px] mx-auto px-6 lg:px-12 mt-12 grid lg:grid-cols-4 gap-12 items-start">
+          
+          {/* Sidebar Filters */}
+          <aside className="lg:col-span-1 space-y-8 sticky top-32">
+            <div className="bg-white p-6 sport-shadow-sm border-2 border-black">
+              <h2 className="flex items-center gap-2 text-2xl font-heading uppercase border-b-2 border-gray-100 pb-4 mb-4">
+                <Filter className="w-5 h-5" /> Filter by Nation
+              </h2>
+              <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                {teams.map(team => (
+                  <button
+                    key={team}
+                    onClick={() => setSelectedTeam(team)}
+                    className={`text-left px-4 py-3 font-bold uppercase text-sm transition-all border-l-4
+                      ${selectedTeam === team 
+                        ? 'border-primary bg-black text-white' 
+                        : 'border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-black'}`}
+                  >
+                    {team}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </aside>
+
+          {/* Product Grid */}
+          <div className="lg:col-span-3">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="font-heading text-4xl uppercase animate-pulse">Loading Kits...</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    to={`/product/${product.id}`}
+                    className="group flex flex-col bg-white border-4 border-transparent hover:border-black transition-all duration-300 sport-shadow"
+                  >
+                    <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden">
+                      {product.discountPrice && (
+                        <div className="absolute top-4 left-4 z-10 bg-primary text-black font-heading text-xl uppercase px-4 py-1 transform -skew-x-12 shadow-md">
+                          SALE
+                        </div>
+                      )}
+                      <img
+                        src={product.images[0] || 'https://via.placeholder.com/600x800/111/FFF?text=KIT'}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Size Preview on Hover */}
+                      <div className="absolute bottom-0 left-0 w-full bg-black text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <p className="text-xs font-bold text-gray-400 uppercase mb-2">Available Sizes</p>
+                        <div className="flex gap-2">
+                          {product.sizes.map(size => (
+                            <span key={size} className="w-8 h-8 flex items-center justify-center border border-gray-600 font-bold text-xs">{size}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-5 flex-grow flex flex-col">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{product.team}</p>
+                      <h3 className="text-xl font-heading uppercase leading-tight mb-4 group-hover:text-primary transition-colors flex-grow">
+                        {product.name}
+                      </h3>
+                      <div className="border-t-2 border-gray-100 pt-3 flex justify-between items-end">
+                        <div className="font-jersey text-2xl font-bold">
+                          {product.discountPrice ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-red-600">৳{product.discountPrice}</span>
+                              <span className="text-sm text-gray-400 line-through">৳{product.price}</span>
+                            </div>
+                          ) : (
+                            <span>৳{product.price}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+                
+                {filteredProducts.length === 0 && (
+                  <div className="col-span-full py-32 text-center bg-white border-4 border-dashed border-gray-200">
+                    <h3 className="font-heading text-4xl text-gray-400 uppercase mb-4">No Kits Found</h3>
+                    <p className="font-bold text-gray-500">Try adjusting your filters or search query.</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Layout>

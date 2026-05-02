@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['var(--font-heading)'],
-        'body': ['var(--font-body)'],
+        heading: ["Anton", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+        jersey: ["Oswald", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,25 +52,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Loomé Brand Colors
-        gold: {
-          DEFAULT: "hsl(var(--gold))",
-          light: "hsl(var(--gold-light))",
+        // Football Theme Colors
+        stadium: {
+          dark: "#111111",
+          gray: "#222222",
+          light: "#333333",
         },
-        cream: "hsl(var(--cream))",
-        charcoal: {
-          DEFAULT: "hsl(var(--charcoal))",
-          light: "hsl(var(--charcoal-light))",
+        pitch: {
+          green: "#0B3B24",
+          light: "#145938",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        neon: {
+          volt: "#D4FF00",
+          blue: "#00E5FF",
         },
       },
       borderRadius: {
@@ -79,25 +74,22 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "fade-in-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fade-in-up 0.7s ease-out forwards",
       },
     },
   },
