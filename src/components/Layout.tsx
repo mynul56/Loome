@@ -133,7 +133,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8 text-sm font-bold uppercase tracking-wider">
               <Link to="/shop" className="hover:text-primary transition-colors">Kits 26</Link>
-              <Link to="/shop?category=national" className="hover:text-primary transition-colors">Nations</Link>
+              <Link to="/nations" className="hover:text-primary transition-colors">Nations</Link>
               <Link to="/about" className="hover:text-primary transition-colors">About</Link>
             </nav>
           </div>
@@ -205,6 +205,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {isMenuOpen && (
           <div className="lg:hidden absolute top-20 left-0 w-full bg-secondary border-b-4 border-primary shadow-2xl flex flex-col font-heading text-2xl uppercase tracking-wider">
             <Link to="/shop" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">Kits 26</Link>
+            <Link to="/nations" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">Nations</Link>
             <Link to="/about" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">About</Link>
             
             {currentUser ? (
