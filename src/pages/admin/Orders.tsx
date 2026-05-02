@@ -52,14 +52,14 @@ const AdminOrders: React.FC = () => {
                 <th className="p-4 font-medium">Order ID</th>
                 <th className="p-4 font-medium">Date</th>
                 <th className="p-4 font-medium">Customer</th>
-                <th className="p-4 font-medium">Product</th>
+                <th className="p-4 font-medium">Items</th>
                 <th className="p-4 font-medium">Total</th>
                 <th className="p-4 font-medium">Status</th>
               </tr>
             </thead>
             <tbody>
               {orders.map(order => (
-                <tr key={order.id} className="border-b hover:bg-gray-50">
+                <tr key={order.id} className="border-b hover:bg-gray-50 align-top">
                   <td className="p-4 font-medium">{order.id}</td>
                   <td className="p-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td className="p-4">
@@ -67,10 +67,18 @@ const AdminOrders: React.FC = () => {
                     <div className="text-xs text-gray-500">{order.phone}</div>
                   </td>
                   <td className="p-4">
-                    <div>{order.productName}</div>
-                    <div className="text-xs text-gray-500">Size: {order.selectedSize} × {order.quantity}</div>
+                    <div className="space-y-2">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="border-b border-gray-100 last:border-0 pb-1 last:pb-0">
+                          <div className="font-medium text-xs">{item.productName}</div>
+                          <div className="text-[10px] text-gray-500 uppercase tracking-tighter">
+                            Size: {item.selectedSize} | Qty: {item.quantity} | ৳{item.price * item.quantity}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </td>
-                  <td className="p-4 font-medium">৳{order.totalPrice}</td>
+                  <td className="p-4 font-medium font-jersey text-lg">৳{order.totalPrice}</td>
                   <td className="p-4">
                     <select 
                       value={order.status}

@@ -26,17 +26,22 @@ export interface Product {
   createdAt: string;
 }
 
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  selectedSize: string;
+  quantity: number;
+  price: number;
+}
+
 export interface Order {
   id: string;
-  userId?: string; // Optional if guest checkout is allowed
+  userId?: string;
   customerName: string;
   phone: string;
   email?: string;
   deliveryAddress: string;
-  productId: string;
-  productName: string; // Snapshot at time of order
-  selectedSize: string;
-  quantity: number;
+  items: OrderItem[];
   totalPrice: number;
   additionalNote?: string;
   preferredContact: 'Phone' | 'Email';
@@ -147,17 +152,17 @@ const generateDemoProducts = (): Product[] => {
 };
 
 export const initializeDB = () => {
-  if (!localStorage.getItem('loome_users_v3')) {
-    localStorage.setItem('loome_users_v3', JSON.stringify([defaultAdmin]));
+  if (!localStorage.getItem('loome_users_v4')) {
+    localStorage.setItem('loome_users_v4', JSON.stringify([defaultAdmin]));
   }
-  if (!localStorage.getItem('loome_products_v3')) {
-    localStorage.setItem('loome_products_v3', JSON.stringify(generateDemoProducts()));
+  if (!localStorage.getItem('loome_products_v4')) {
+    localStorage.setItem('loome_products_v4', JSON.stringify(generateDemoProducts()));
   }
-  if (!localStorage.getItem('loome_orders_v3')) {
-    localStorage.setItem('loome_orders_v3', JSON.stringify([]));
+  if (!localStorage.getItem('loome_orders_v4')) {
+    localStorage.setItem('loome_orders_v4', JSON.stringify([]));
   }
-  if (!localStorage.getItem('loome_cms_v3')) {
-    localStorage.setItem('loome_cms_v3', JSON.stringify(defaultCMS));
+  if (!localStorage.getItem('loome_cms_v4')) {
+    localStorage.setItem('loome_cms_v4', JSON.stringify(defaultCMS));
   }
 };
 

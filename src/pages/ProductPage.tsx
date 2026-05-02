@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ShieldCheck, Zap, ShoppingCart } from 'lucide-react';
 import { productService } from '@/services/product.service';
 import { Product } from '@/services/db';
+import { cartService } from '@/services/cart.service';
 import FootballLoader from '@/components/FootballLoader';
+import { useToast } from '@/components/ui/use-toast';
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -37,15 +40,21 @@ const ProductPage: React.FC = () => {
     loadProduct();
   }, [id]);
 
-  const handleOrder = () => {
+  const handleAddToCart = () => {
     if (!product) return;
-    navigate('/checkout', { 
-      state: { 
-        productId: product.id, 
-        selectedSize, 
-        quantity 
-      } 
+    cartService.addToCart(product, selectedSize, quantity);
+    toast({
+      title: 'Added to Cart',
+      description: `${product.name} (Size ${selectedSize}) added to your kits.`,
     });
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    // Clear cart and add only this item for quick checkout
+    cartService.clearCart();
+    cartService.addToCart(product, selectedSize, quantity);
+    navigate('/checkout');
   };
 
   if (isLoading) {
@@ -188,13 +197,22 @@ const ProductPage: React.FC = () => {
                 </div>
               </div>
 
-              <button 
-                onClick={handleOrder}
-                disabled={!product.inStock}
-                className="w-full bg-primary text-black py-6 border-4 border-black font-heading text-3xl uppercase tracking-wider hover:bg-black hover:text-white transition-all transform hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed mb-4 flex items-center justify-center gap-3"
-              >
-                {product.inStock ? 'Checkout Securely' : 'Sold Out'} <ArrowRight className="w-8 h-8" />
-              </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                  className="w-full bg-black text-white py-6 border-4 border-black font-heading text-2xl uppercase tracking-wider hover:bg-primary hover:text-black transition-all transform hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#D4FF00] disabled:opacity-50 disabled:cursor-not-allowed mb-4 flex items-center justify-center gap-3"
+                >
+                  <ShoppingCart className="w-6 h-6" /> Add to Cart
+                </button>
+                <button 
+                  onClick={handleBuyNow}
+                  disabled={!product.inStock}
+                  className="w-full bg-primary text-black py-6 border-4 border-black font-heading text-2xl uppercase tracking-wider hover:bg-black hover:text-white transition-all transform hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed mb-4 flex items-center justify-center gap-3"
+                >
+                  Buy It Now <ArrowRight className="w-6 h-6" />
+                </button>
+              </div>
               
               <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t-2 border-gray-200">
                 <div className="flex flex-col items-center text-center p-4 bg-gray-50">

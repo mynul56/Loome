@@ -3,20 +3,17 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { productService } from '@/services/product.service';
 import { orderService } from '@/services/order.service';
 import { authService } from '@/services/auth.service';
-import { Product } from '@/services/db';
+import { cartService, CartItem } from '@/services/cart.service';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import FootballLoader from '@/components/FootballLoader';
 
 const Checkout: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const state = location.state as { productId: string, selectedSize: string, quantity: number } | null;
-  const [product, setProduct] = useState<Product | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,46 +28,32 @@ const Checkout: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!state?.productId) {
+    const cart = cartService.getCart();
+    if (cart.length === 0) {
       navigate('/shop');
       return;
     }
+    setCartItems(cart);
 
-    const loadData = async () => {
-      try {
-        const prod = await productService.getProductById(state.productId);
-        if (!prod) {
-          navigate('/shop');
-          return;
-        }
-        setProduct(prod);
-
-        const user = authService.getCurrentUser();
-        if (user) {
-          setFormData(prev => ({
-            ...prev,
-            customerName: user.name,
-            email: user.email
-          }));
-        }
-      } catch (err) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Failed to load checkout details' });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, [state, navigate, toast]);
+    const user = authService.getCurrentUser();
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        customerName: user.name,
+        email: user.email
+      }));
+    }
+    setIsLoading(false);
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!product || !state) return;
+    if (cartItems.length === 0) return;
     setIsSubmitting(true);
 
     try {
       const user = authService.getCurrentUser();
-      const unitPrice = product.discountPrice || product.price;
-      const totalPrice = unitPrice * state.quantity;
+      const totalPrice = cartService.getCartTotal();
 
       await orderService.createOrder({
         userId: user?.id,
@@ -78,18 +61,22 @@ const Checkout: React.FC = () => {
         phone: formData.phone,
         email: formData.email,
         deliveryAddress: formData.deliveryAddress,
-        productId: product.id,
-        productName: product.name,
-        selectedSize: state.selectedSize,
-        quantity: state.quantity,
+        items: cartItems.map(item => ({
+          productId: item.productId,
+          productName: item.name,
+          selectedSize: item.selectedSize,
+          quantity: item.quantity,
+          price: item.price
+        })),
         totalPrice,
         additionalNote: formData.additionalNote,
         preferredContact: formData.preferredContact
       });
 
+      cartService.clearCart();
       toast({
         title: 'ORDER SECURED!',
-        description: 'Your kit is reserved. We will contact you shortly.',
+        description: 'Your kits are reserved. We will contact you shortly.',
       });
       navigate('/');
     } catch (err: any) {
@@ -99,25 +86,24 @@ const Checkout: React.FC = () => {
     }
   };
 
-  if (isLoading || !product || !state) {
+  if (isLoading) {
     return <Layout><FootballLoader text="Loading Checkout..." /></Layout>;
   }
 
-  const unitPrice = product.discountPrice || product.price;
-  const totalPrice = unitPrice * state.quantity;
+  const totalPrice = cartService.getCartTotal();
 
   return (
     <Layout>
       <div className="bg-gray-100 min-h-screen pb-20">
         <div className="bg-black text-white px-6 lg:px-12 py-4 flex items-center border-b-4 border-primary">
-          <Link to={`/product/${product.id}`} className="inline-flex items-center text-sm font-bold uppercase hover:text-primary transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Kit
+          <Link to="/shop" className="inline-flex items-center text-sm font-bold uppercase hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Continue Shopping
           </Link>
         </div>
 
         <div className="px-6 lg:px-12 max-w-[1400px] mx-auto mt-12">
           <h1 className="text-5xl lg:text-7xl font-heading uppercase mb-10 text-black tracking-tighter">
-            Secure Your <span className="text-primary bg-black px-4 ml-2">Kit</span>
+            Secure Your <span className="text-primary bg-black px-4 ml-2">Kits</span>
           </h1>
           
           <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -180,17 +166,22 @@ const Checkout: React.FC = () => {
             <div className="lg:col-span-4 bg-black text-white p-8 border-4 border-primary sticky top-32 sport-shadow transform md:rotate-1 z-10">
               <h2 className="text-3xl font-heading uppercase mb-8 border-b-2 border-gray-800 pb-4">Match Summary</h2>
               
-              <div className="flex gap-4 mb-6">
-                <div className="w-24 aspect-[3/4] bg-white overflow-hidden border-2 border-white flex-shrink-0">
-                  <img src={product.images[0] || 'https://via.placeholder.com/100'} alt="" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h3 className="font-heading text-2xl uppercase leading-tight mb-2 text-primary">{product.name}</h3>
-                  <div className="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-widest mb-2">
-                    <span className="bg-white text-black px-2 py-1">SIZE {state.selectedSize}</span>
-                    <span className="bg-gray-800 text-white px-2 py-1">QTY {state.quantity}</span>
+              <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                {cartItems.map((item, idx) => (
+                  <div key={`${item.productId}-${item.selectedSize}`} className="flex gap-4 border-b border-gray-800 pb-4 last:border-0 last:pb-0">
+                    <div className="w-20 aspect-[3/4] bg-white overflow-hidden border-2 border-white flex-shrink-0">
+                      <img src={item.image} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <h3 className="font-heading text-xl uppercase leading-tight mb-1 text-primary">{item.name}</h3>
+                      <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-widest mb-1">
+                        <span className="bg-white text-black px-1.5 py-0.5">SIZE {item.selectedSize}</span>
+                        <span className="bg-gray-800 text-white px-1.5 py-0.5">QTY {item.quantity}</span>
+                      </div>
+                      <div className="font-jersey text-lg">৳{item.price * item.quantity}</div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
 
               <div className="space-y-4 mb-8 font-jersey text-xl border-t-2 border-gray-800 pt-6">

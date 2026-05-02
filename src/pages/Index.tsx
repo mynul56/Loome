@@ -176,14 +176,22 @@ const Index: React.FC = () => {
 
       {/* AGGRESSIVE PROMO SECTION */}
       <section className="w-full bg-black text-white min-h-[85vh] flex items-center relative overflow-hidden py-32">
-        {/* Abstract field lines */}
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border-[15px] border-gray-800 rounded-full"></div>
+        {/* Animated Abstract field lines */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          {/* Breathing center circle */}
+          <div className="absolute top-1/2 left-1/2 w-[1200px] h-[1200px] border-[15px] border-gray-800 rounded-full" style={{ animation: 'pulse-ring 8s ease-in-out infinite' }}></div>
+          {/* Static center line */}
           <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[15px] bg-gray-800"></div>
+          {/* Sci-fi scanner line */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary shadow-[0_0_20px_5px_rgba(212,255,0,0.4)]" style={{ animation: 'scan-line 6s linear infinite' }}></div>
+          {/* Floating Neon Particles */}
+          <div className="absolute top-[20%] left-[15%] w-3 h-3 bg-primary rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
+          <div className="absolute bottom-[25%] right-[15%] w-4 h-4 bg-primary rounded-full animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }}></div>
+          <div className="absolute top-[60%] left-[80%] w-2 h-2 bg-primary rounded-full animate-ping" style={{ animationDuration: '2s', animationDelay: '0.5s' }}></div>
         </div>
 
         <div className="relative z-10 px-6 lg:px-12 max-w-[1800px] mx-auto text-center w-full">
-          <Zap className="w-24 h-24 text-primary mx-auto mb-10 animate-pulse" />
+          <Zap className="w-24 h-24 text-primary mx-auto mb-10 animate-bounce" />
           <h2 className="text-7xl md:text-[10rem] font-heading uppercase mb-10 leading-[0.85] tracking-tighter">
             Built For<br/><span className="text-primary">The Pitch</span>
           </h2>
@@ -202,6 +210,17 @@ const Index: React.FC = () => {
         @keyframes slide {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
+        }
+        @keyframes pulse-ring {
+          0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+          50% { transform: translate(-50%, -50%) scale(1.02); opacity: 1; box-shadow: 0 0 40px rgba(212, 255, 0, 0.1); }
+          100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+        }
+        @keyframes scan-line {
+          0% { transform: translateY(-100px); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(100vh); opacity: 0; }
         }
       `}} />
     </Layout>
