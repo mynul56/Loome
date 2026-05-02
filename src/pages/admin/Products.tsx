@@ -122,8 +122,32 @@ const AdminProducts: React.FC = () => {
                   <input type="number" required value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} className="w-full p-2 border rounded" />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-1">Image URL</label>
-                  <input type="text" required value={formData.images?.[0] || ''} onChange={e => setFormData({...formData, images: [e.target.value]})} className="w-full p-2 border rounded" placeholder="https://..." />
+                  <label className="block text-sm font-medium mb-1 flex justify-between">
+                    Image
+                    <span className="text-xs text-gray-500 font-normal">URL or Upload (Max ~2MB)</span>
+                  </label>
+                  <div className="space-y-2">
+                    <input type="text" value={formData.images?.[0] || ''} onChange={e => setFormData({...formData, images: [e.target.value]})} className="w-full p-2 border rounded" placeholder="https://..." />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast({ variant: 'destructive', title: 'File Too Large', description: 'Please upload an image smaller than 2MB.' });
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData({...formData, images: [reader.result as string]});
+                          toast({ title: 'Image Uploaded', description: 'Image converted and ready to save.' });
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                      className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-black file:text-white hover:file:bg-black/80"
+                    />
+                  </div>
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium mb-1">Short Description</label>

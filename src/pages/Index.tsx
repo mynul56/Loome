@@ -5,6 +5,7 @@ import { ArrowRight, Zap } from 'lucide-react';
 import { cmsService } from '@/services/cms.service';
 import { productService } from '@/services/product.service';
 import { CMSContent, Product } from '@/services/db';
+import FootballLoader from '@/components/FootballLoader';
 
 const Index: React.FC = () => {
   const [cms, setCms] = useState<CMSContent | null>(null);
@@ -37,10 +38,7 @@ const Index: React.FC = () => {
   if (isLoading || !cms) {
     return (
       <Layout>
-        <div className="h-[80vh] w-full flex flex-col items-center justify-center text-black">
-          <Zap className="w-12 h-12 text-primary animate-pulse mb-4" />
-          <h2 className="text-3xl font-heading uppercase tracking-widest animate-pulse">Loading Stadium...</h2>
-        </div>
+        <FootballLoader text="Loading Stadium..." />
       </Layout>
     );
   }
@@ -177,24 +175,24 @@ const Index: React.FC = () => {
       </section>
 
       {/* AGGRESSIVE PROMO SECTION */}
-      <section className="w-full bg-black text-white py-32 relative overflow-hidden">
+      <section className="w-full bg-black text-white min-h-[85vh] flex items-center relative overflow-hidden py-32">
         {/* Abstract field lines */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[10px] border-white rounded-full"></div>
-          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[10px] bg-white"></div>
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border-[15px] border-gray-800 rounded-full"></div>
+          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[15px] bg-gray-800"></div>
         </div>
 
-        <div className="relative z-10 px-6 lg:px-12 max-w-[1800px] mx-auto text-center">
-          <Zap className="w-20 h-20 text-primary mx-auto mb-8" />
-          <h2 className="text-6xl md:text-8xl font-heading uppercase mb-8 leading-none">
+        <div className="relative z-10 px-6 lg:px-12 max-w-[1800px] mx-auto text-center w-full">
+          <Zap className="w-24 h-24 text-primary mx-auto mb-10 animate-pulse" />
+          <h2 className="text-7xl md:text-[10rem] font-heading uppercase mb-10 leading-[0.85] tracking-tighter">
             Built For<br/><span className="text-primary">The Pitch</span>
           </h2>
-          <p className="text-xl md:text-2xl font-bold uppercase text-gray-400 max-w-3xl mx-auto mb-12">
+          <p className="text-xl md:text-3xl font-bold uppercase text-gray-400 max-w-4xl mx-auto mb-16 tracking-wider">
             {cms.aboutText}
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Link to="/shop" className="bg-primary text-black font-heading text-2xl uppercase px-12 py-5 transform -skew-x-12 hover:bg-white transition-colors">
-              <span className="block transform skew-x-12">Gear Up Now</span>
+            <Link to="/shop" className="group bg-primary text-black font-heading text-3xl md:text-5xl uppercase px-16 py-8 transform -skew-x-12 hover:bg-white transition-all hover:scale-105 sport-shadow">
+              <span className="block transform skew-x-12 group-hover:tracking-widest transition-all duration-300">Gear Up Now</span>
             </Link>
           </div>
         </div>

@@ -111,8 +111,8 @@ const generateDemoProducts = (): Product[] => {
       name: `${team.name} 2026 Authentic Home Kit`,
       team: team.name,
       type: 'Home',
-      price: 3500 + Math.floor(Math.random() * 1000),
-      discountPrice: Math.random() > 0.8 ? 2500 : undefined,
+      price: 1500,
+      discountPrice: 1200,
       // Using placehold.co to generate clean, dynamic mockups matching team colors
       images: [`https://placehold.co/600x800/${team.color}/FFF?text=${team.name}+\\nHome+Kit`],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -130,8 +130,8 @@ const generateDemoProducts = (): Product[] => {
       name: `${team.name} 2026 Authentic Away Kit`,
       team: team.name,
       type: 'Away',
-      price: 3200 + Math.floor(Math.random() * 1000),
-      discountPrice: undefined,
+      price: 1500,
+      discountPrice: 1200,
       images: [`https://placehold.co/600x800/${team.awayColor}/${team.awayColor === 'FFFFFF' || team.awayColor === 'FFFF00' ? '000' : 'FFF'}?text=${team.name}+\\nAway+Kit`],
       sizes: ['S', 'M', 'L', 'XL'],
       inStock: Math.random() > 0.2, // 80% chance of being in stock
@@ -147,17 +147,17 @@ const generateDemoProducts = (): Product[] => {
 };
 
 export const initializeDB = () => {
-  if (!localStorage.getItem('loome_users')) {
-    localStorage.setItem('loome_users', JSON.stringify([defaultAdmin]));
+  if (!localStorage.getItem('loome_users_v3')) {
+    localStorage.setItem('loome_users_v3', JSON.stringify([defaultAdmin]));
   }
-  if (!localStorage.getItem('loome_products')) {
-    localStorage.setItem('loome_products', JSON.stringify(generateDemoProducts()));
+  if (!localStorage.getItem('loome_products_v3')) {
+    localStorage.setItem('loome_products_v3', JSON.stringify(generateDemoProducts()));
   }
-  if (!localStorage.getItem('loome_orders')) {
-    localStorage.setItem('loome_orders', JSON.stringify([]));
+  if (!localStorage.getItem('loome_orders_v3')) {
+    localStorage.setItem('loome_orders_v3', JSON.stringify([]));
   }
-  if (!localStorage.getItem('loome_cms')) {
-    localStorage.setItem('loome_cms', JSON.stringify(defaultCMS));
+  if (!localStorage.getItem('loome_cms_v3')) {
+    localStorage.setItem('loome_cms_v3', JSON.stringify(defaultCMS));
   }
 };
 

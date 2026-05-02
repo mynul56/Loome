@@ -88,13 +88,48 @@ const AdminCMS: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Background Video URL</label>
-              <input 
-                type="text" 
-                value={content.heroVideoUrl} 
-                onChange={(e) => handleChange('heroVideoUrl', e.target.value)}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black/5"
-              />
+              <label className="text-sm font-medium flex justify-between items-center">
+                Background Video 
+                <span className="text-xs text-gray-500 font-normal">URL or Upload (Max ~2MB for LocalStorage)</span>
+              </label>
+              <div className="space-y-2">
+                <input 
+                  type="text" 
+                  value={content.heroVideoUrl} 
+                  onChange={(e) => handleChange('heroVideoUrl', e.target.value)}
+                  placeholder="https://example.com/video.mp4"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black/5"
+                />
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      // Check file size (approx 2MB limit for local storage mockup)
+                      if (file.size > 2 * 1024 * 1024) {
+                        toast({ 
+                          variant: 'destructive', 
+                          title: 'File Too Large', 
+                          description: 'For this demo, please upload a video smaller than 2MB, or paste a direct URL.' 
+                        });
+                        return;
+                      }
+
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        const base64String = reader.result as string;
+                        handleChange('heroVideoUrl', base64String);
+                        toast({ title: 'Video Uploaded', description: 'Video converted and ready to save.' });
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-black hover:file:bg-primary/80"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { User, delay } from './db';
 
-const USERS_KEY = 'loome_users';
-const CURRENT_USER_KEY = 'loome_current_user';
+const USERS_KEY = 'loome_users_v3';
+const CURRENT_USER_KEY = 'loome_current_user_v3';
 
 export const authService = {
   async login(email: string, password?: string): Promise<User> {

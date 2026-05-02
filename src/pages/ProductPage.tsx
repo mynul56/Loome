@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ShieldCheck, Zap } from 'lucide-react';
 import { productService } from '@/services/product.service';
 import { Product } from '@/services/db';
+import FootballLoader from '@/components/FootballLoader';
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,10 +51,7 @@ const ProductPage: React.FC = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="h-[70vh] flex flex-col items-center justify-center text-black">
-          <Zap className="w-12 h-12 text-primary animate-pulse mb-4" />
-          <h2 className="text-4xl font-heading uppercase animate-pulse">Loading Kit...</h2>
-        </div>
+        <FootballLoader text="Loading Kit..." />
       </Layout>
     );
   }

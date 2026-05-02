@@ -8,6 +8,7 @@ import { orderService } from '@/services/order.service';
 import { authService } from '@/services/auth.service';
 import { Product } from '@/services/db';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import FootballLoader from '@/components/FootballLoader';
 
 const Checkout: React.FC = () => {
   const location = useLocation();
@@ -99,7 +100,7 @@ const Checkout: React.FC = () => {
   };
 
   if (isLoading || !product || !state) {
-    return <Layout><div className="pt-32 pb-20 text-center font-heading text-4xl uppercase animate-pulse">Loading Checkout...</div></Layout>;
+    return <Layout><FootballLoader text="Loading Checkout..." /></Layout>;
   }
 
   const unitPrice = product.discountPrice || product.price;

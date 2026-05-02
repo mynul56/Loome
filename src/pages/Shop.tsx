@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import { productService } from '@/services/product.service';
 import { Product } from '@/services/db';
 import { Filter, Search } from 'lucide-react';
+import FootballLoader from '@/components/FootballLoader';
 
 const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -104,8 +105,8 @@ const Shop: React.FC = () => {
           {/* Product Grid */}
           <div className="lg:col-span-3">
             {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="font-heading text-4xl uppercase animate-pulse">Loading Kits...</div>
+              <div className="flex justify-center items-center py-20">
+                <FootballLoader text="Loading Kits..." />
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
