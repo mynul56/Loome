@@ -152,6 +152,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <UserIcon className="w-4 h-4" />
                   {currentUser.name.split(' ')[0]}
                 </div>
+                <Link to="/my-orders" className="hover:text-primary transition-colors">
+                  My Orders
+                </Link>
                 <button onClick={handleLogout} className="hover:text-primary transition-colors">
                   Logout
                 </button>
@@ -209,6 +212,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {currentUser.role === 'admin' && (
                   <Link to="/admin/dashboard" className="p-6 border-b border-gray-800 text-red-500 hover:bg-black">Admin Panel</Link>
                 )}
+                <Link to="/my-orders" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">My Orders</Link>
                 <button onClick={handleLogout} className="p-6 text-left border-b border-gray-800 hover:text-primary hover:bg-black w-full">Logout</button>
               </>
             ) : (

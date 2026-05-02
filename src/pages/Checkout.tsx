@@ -66,7 +66,8 @@ const Checkout: React.FC = () => {
           productName: item.name,
           selectedSize: item.selectedSize,
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
+          image: item.image
         })),
         totalPrice,
         additionalNote: formData.additionalNote,

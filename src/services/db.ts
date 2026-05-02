@@ -23,6 +23,7 @@ export interface Product {
   fullDescription: string;
   isFeatured: boolean;
   isActive: boolean;
+  category: string; // e.g., 'National', 'Club'
   createdAt: string;
 }
 
@@ -32,6 +33,7 @@ export interface OrderItem {
   selectedSize: string;
   quantity: number;
   price: number;
+  image: string;
 }
 
 export interface Order {
@@ -126,6 +128,7 @@ const generateDemoProducts = (): Product[] => {
       fullDescription: `Experience the pinnacle of football engineering with the ${team.name} 2026 Home Kit. Designed for elite performance and maximum comfort on the pitch. Features moisture-wicking technology and premium team crest detailing.`,
       isFeatured: index < 4, // First 4 teams' home kits are featured
       isActive: true,
+      category: 'National',
       createdAt: new Date(Date.now() - index * 10000).toISOString()
     });
 
@@ -144,6 +147,7 @@ const generateDemoProducts = (): Product[] => {
       fullDescription: `Represent ${team.name} on the road with the official 2026 Away Kit. Crafted with breathable fabric for peak performance and everyday wearability.`,
       isFeatured: false,
       isActive: true,
+      category: 'National',
       createdAt: new Date(Date.now() - index * 10000 - 5000).toISOString()
     });
   });
@@ -152,17 +156,17 @@ const generateDemoProducts = (): Product[] => {
 };
 
 export const initializeDB = () => {
-  if (!localStorage.getItem('loome_users_v4')) {
-    localStorage.setItem('loome_users_v4', JSON.stringify([defaultAdmin]));
+  if (!localStorage.getItem('loome_users_v5')) {
+    localStorage.setItem('loome_users_v5', JSON.stringify([defaultAdmin]));
   }
-  if (!localStorage.getItem('loome_products_v4')) {
-    localStorage.setItem('loome_products_v4', JSON.stringify(generateDemoProducts()));
+  if (!localStorage.getItem('loome_products_v5')) {
+    localStorage.setItem('loome_products_v5', JSON.stringify(generateDemoProducts()));
   }
-  if (!localStorage.getItem('loome_orders_v4')) {
-    localStorage.setItem('loome_orders_v4', JSON.stringify([]));
+  if (!localStorage.getItem('loome_orders_v5')) {
+    localStorage.setItem('loome_orders_v5', JSON.stringify([]));
   }
-  if (!localStorage.getItem('loome_cms_v4')) {
-    localStorage.setItem('loome_cms_v4', JSON.stringify(defaultCMS));
+  if (!localStorage.getItem('loome_cms_v5')) {
+    localStorage.setItem('loome_cms_v5', JSON.stringify(defaultCMS));
   }
 };
 

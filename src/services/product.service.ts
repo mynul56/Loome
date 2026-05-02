@@ -1,6 +1,6 @@
 import { Product, delay } from './db';
 
-const PRODUCTS_KEY = 'loome_products_v4';
+const PRODUCTS_KEY = 'loome_products_v5';
 
 export const productService = {
   async getAllProducts(includeInactive = false): Promise<Product[]> {

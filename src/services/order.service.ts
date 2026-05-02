@@ -1,6 +1,6 @@
 import { Order, delay } from './db';
 
-const ORDERS_KEY = 'loome_orders_v4';
+const ORDERS_KEY = 'loome_orders_v5';
 
 export const orderService = {
   async getAllOrders(): Promise<Order[]> {

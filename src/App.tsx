@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
+import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
 
 // Auth Pages
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />

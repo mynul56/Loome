@@ -1,6 +1,6 @@
 import { CMSContent, delay } from './db';
 
-const CMS_KEY = 'loome_cms_v4';
+const CMS_KEY = 'loome_cms_v5';
 
 export const cmsService = {
   async getContent(): Promise<CMSContent> {

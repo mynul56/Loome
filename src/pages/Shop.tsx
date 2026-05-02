@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { productService } from '@/services/product.service';
 import { Product } from '@/services/db';
@@ -7,6 +7,9 @@ import { Filter, Search } from 'lucide-react';
 import FootballLoader from '@/components/FootballLoader';
 
 const Shop: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +23,6 @@ const Shop: React.FC = () => {
       try {
         const data = await productService.getAllProducts(true); // only active
         setProducts(data);
-        setFilteredProducts(data);
       } catch (err) {
         console.error("Failed to load products", err);
       } finally {
@@ -32,9 +34,18 @@ const Shop: React.FC = () => {
 
   useEffect(() => {
     let result = products;
+    
+    // Filter by Category Param (URL)
+    if (categoryParam) {
+      result = result.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
+    }
+
+    // Filter by Sidebar Nation
     if (selectedTeam !== 'All') {
       result = result.filter(p => p.team === selectedTeam);
     }
+    
+    // Filter by Search
     if (searchQuery.trim() !== '') {
       result = result.filter(p => 
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -42,7 +53,7 @@ const Shop: React.FC = () => {
       );
     }
     setFilteredProducts(result);
-  }, [selectedTeam, searchQuery, products]);
+  }, [selectedTeam, searchQuery, products, categoryParam]);
 
   const teams = ['All', ...Array.from(new Set(products.map(p => p.team)))].sort();
 
@@ -53,7 +64,8 @@ const Shop: React.FC = () => {
         <div className="bg-black text-white pt-16 pb-12 px-6 lg:px-12 border-b-8 border-primary">
           <div className="max-w-[1800px] mx-auto">
             <h1 className="text-5xl md:text-7xl font-heading uppercase tracking-tighter mb-8">
-              Kits <span className="text-primary">2026</span>
+              {categoryParam === 'national' ? 'National' : 'Kits'}{' '}
+              <span className="text-primary">{categoryParam === 'national' ? 'Teams' : '2026'}</span>
             </h1>
             
             <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
