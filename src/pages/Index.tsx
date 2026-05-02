@@ -88,24 +88,6 @@ const Index: React.FC = () => {
           </p>
         </div>
 
-        {/* Bottom Right Card */}
-        <div className="absolute bottom-12 lg:bottom-16 right-6 lg:right-12 z-20 hidden md:block cursor-auto">
-          <div className="bg-[#EAE4D9] text-black rounded-xl p-8 lg:p-10 max-w-[480px] flex gap-8 items-start shadow-2xl hover:scale-[1.02] transition-transform duration-300">
-            <h3 className="font-heading text-3xl leading-tight w-1/2">
-              Official 2026 Gear
-            </h3>
-            <div className="w-1/2 flex flex-col justify-between min-h-[120px]">
-              <p className="text-sm font-medium leading-relaxed">
-                <span className="mr-3 opacity-50 text-xs">01</span>
-                Premium quality authentic jerseys crafted for the ultimate World Cup experience.
-              </p>
-              <button className="w-8 h-8 mt-6 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white transition-colors">
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Bottom Progress Bar */}
         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/20 z-20 flex">
           {/* Active Progress */}
