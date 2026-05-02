@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User as UserIcon, Menu, X, ShieldAlert, Trash2, Plus, Minus } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { cartService, CartItem } from '@/services/cart.service';
+import LiveScoreTicker from './LiveScoreTicker';
+import AIAssistant from './AIAssistant';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -134,6 +136,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <nav className="hidden lg:flex items-center gap-8 text-sm font-bold uppercase tracking-wider">
               <Link to="/shop" className="hover:text-primary transition-colors">Kits 26</Link>
               <Link to="/nations" className="hover:text-primary transition-colors">Nations</Link>
+              <Link to="/live" className="hover:text-primary transition-colors flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+                Live
+              </Link>
               <Link to="/about" className="hover:text-primary transition-colors">About</Link>
             </nav>
           </div>
@@ -206,6 +212,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="lg:hidden absolute top-20 left-0 w-full bg-secondary border-b-4 border-primary shadow-2xl flex flex-col font-heading text-2xl uppercase tracking-wider">
             <Link to="/shop" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">Kits 26</Link>
             <Link to="/nations" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">Nations</Link>
+            <Link to="/live" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black flex items-center gap-3">
+              <span className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
+              Live Scores
+            </Link>
             <Link to="/about" className="p-6 border-b border-gray-800 hover:text-primary hover:bg-black">About</Link>
             
             {currentUser ? (
@@ -264,6 +274,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
+      <AIAssistant />
     </div>
   );
 };

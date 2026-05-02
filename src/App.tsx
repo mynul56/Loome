@@ -14,6 +14,7 @@ import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
 import Nations from "./pages/Nations";
+import LiveScores from "./pages/LiveScores";
 import NotFound from "./pages/NotFound";
 
 // Auth Pages
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/nations" element={<Nations />} />
+          <Route path="/live" element={<LiveScores />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />

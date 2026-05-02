@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { ArrowRight, Zap } from 'lucide-react';
+import LiveScoreTicker from '@/components/LiveScoreTicker';
 import { cmsService } from '@/services/cms.service';
 import { productService } from '@/services/product.service';
 import { CMSContent, Product } from '@/services/db';
@@ -173,6 +174,11 @@ const Index: React.FC = () => {
           </Link>
         </div>
       </section>
+
+      {/* LIVE SCORE BREAK - BETWEEN SECTIONS */}
+      <div className="py-8 bg-black border-y-4 border-primary">
+        <LiveScoreTicker />
+      </div>
 
       {/* AGGRESSIVE PROMO SECTION */}
       <section className="w-full bg-black text-white min-h-[85vh] flex items-center relative overflow-hidden py-32">
