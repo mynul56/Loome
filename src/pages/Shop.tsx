@@ -1,28 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import Layout from '@/components/Layout';
-import { productService } from '@/services/product.service';
-import { Product } from '@/services/db';
-import { Filter, Search } from 'lucide-react';
-import FootballLoader from '@/components/FootballLoader';
+import FootballLoader from "@/components/FootballLoader";
+import Layout from "@/components/Layout";
+import { Product } from "@/services/db";
+import { mediaService } from "@/services/media.service";
+import { productService } from "@/services/product.service";
+import { Filter, Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 const Shop: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const categoryParam = searchParams.get('category');
-  
+  const categoryParam = searchParams.get("category");
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [productImageUrls, setProductImageUrls] = useState<
+    Record<string, string>
+  >({});
+
   // Filters
-  const [selectedTeam, setSelectedTeam] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [selectedTeam, setSelectedTeam] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const loadData = async () => {
       try {
         const data = await productService.getAllProducts(true); // only active
         setProducts(data);
+        const resolvedImages = await Promise.all(
+          data.map(async (product) => {
+            const path = product.images?.[0] || "";
+            const url = path
+              ? await mediaService.resolveProductImageUrl(path)
+              : "";
+            return [product.id, url] as const;
+          }),
+        );
+        setProductImageUrls(Object.fromEntries(resolvedImages));
       } catch (err) {
         console.error("Failed to load products", err);
       } finally {
@@ -34,28 +48,34 @@ const Shop: React.FC = () => {
 
   useEffect(() => {
     let result = products;
-    
+
     // Filter by Category Param (URL)
     if (categoryParam) {
-      result = result.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
+      result = result.filter(
+        (p) => p.category.toLowerCase() === categoryParam.toLowerCase(),
+      );
     }
 
     // Filter by Sidebar Nation
-    if (selectedTeam !== 'All') {
-      result = result.filter(p => p.team === selectedTeam);
+    if (selectedTeam !== "All") {
+      result = result.filter((p) => p.team === selectedTeam);
     }
-    
+
     // Filter by Search
-    if (searchQuery.trim() !== '') {
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        p.team.toLowerCase().includes(searchQuery.toLowerCase())
+    if (searchQuery.trim() !== "") {
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.team.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
     setFilteredProducts(result);
   }, [selectedTeam, searchQuery, products, categoryParam]);
 
-  const teams = ['All', ...Array.from(new Set(products.map(p => p.team)))].sort();
+  const teams = [
+    "All",
+    ...Array.from(new Set(products.map((p) => p.team))),
+  ].sort();
 
   return (
     <Layout>
@@ -64,16 +84,18 @@ const Shop: React.FC = () => {
         <div className="bg-black text-white pt-16 pb-12 px-6 lg:px-12 border-b-8 border-primary">
           <div className="max-w-[1800px] mx-auto">
             <h1 className="text-5xl md:text-7xl font-heading uppercase tracking-tighter mb-8">
-              {categoryParam === 'national' ? 'National' : 'Kits'}{' '}
-              <span className="text-primary">{categoryParam === 'national' ? 'Teams' : '2026'}</span>
+              {categoryParam === "national" ? "National" : "Kits"}{" "}
+              <span className="text-primary">
+                {categoryParam === "national" ? "Teams" : "2026"}
+              </span>
             </h1>
-            
+
             <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
               {/* Search */}
               <div className="relative w-full md:w-96">
-                <input 
-                  type="text" 
-                  placeholder="SEARCH KITS OR NATIONS..." 
+                <input
+                  type="text"
+                  placeholder="SEARCH KITS OR NATIONS..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-secondary text-white font-bold uppercase text-sm px-12 py-4 focus:outline-none focus:ring-2 focus:ring-primary placeholder-gray-500"
@@ -83,14 +105,14 @@ const Shop: React.FC = () => {
 
               {/* Stats */}
               <div className="font-heading text-2xl uppercase tracking-wider text-gray-400">
-                <span className="text-white">{filteredProducts.length}</span> KITS FOUND
+                <span className="text-white">{filteredProducts.length}</span>{" "}
+                KITS FOUND
               </div>
             </div>
           </div>
         </div>
 
         <div className="max-w-[1800px] mx-auto px-6 lg:px-12 mt-12 grid lg:grid-cols-4 gap-12 items-start">
-          
           {/* Sidebar Filters */}
           <aside className="lg:col-span-1 space-y-8 sticky top-32">
             <div className="bg-white p-6 sport-shadow-sm border-2 border-black">
@@ -98,14 +120,16 @@ const Shop: React.FC = () => {
                 <Filter className="w-5 h-5" /> Filter by Nation
               </h2>
               <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                {teams.map(team => (
+                {teams.map((team) => (
                   <button
                     key={team}
                     onClick={() => setSelectedTeam(team)}
                     className={`text-left px-4 py-3 font-bold uppercase text-sm transition-all border-l-4
-                      ${selectedTeam === team 
-                        ? 'border-primary bg-black text-white' 
-                        : 'border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-black'}`}
+                      ${
+                        selectedTeam === team
+                          ? "border-primary bg-black text-white"
+                          : "border-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-black"
+                      }`}
                   >
                     {team}
                   </button>
@@ -135,23 +159,35 @@ const Shop: React.FC = () => {
                         </div>
                       )}
                       <img
-                        src={product.images[0] || 'https://via.placeholder.com/600x800/111/FFF?text=KIT'}
+                        src={
+                          productImageUrls[product.id] ||
+                          "https://via.placeholder.com/600x800/111/FFF?text=KIT"
+                        }
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       {/* Size Preview on Hover */}
                       <div className="absolute bottom-0 left-0 w-full bg-black text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <p className="text-xs font-bold text-gray-400 uppercase mb-2">Available Sizes</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase mb-2">
+                          Available Sizes
+                        </p>
                         <div className="flex gap-2">
-                          {product.sizes.map(size => (
-                            <span key={size} className="w-8 h-8 flex items-center justify-center border border-gray-600 font-bold text-xs">{size}</span>
+                          {product.sizes.map((size) => (
+                            <span
+                              key={size}
+                              className="w-8 h-8 flex items-center justify-center border border-gray-600 font-bold text-xs"
+                            >
+                              {size}
+                            </span>
                           ))}
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="p-5 flex-grow flex flex-col">
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{product.team}</p>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                        {product.team}
+                      </p>
                       <h3 className="text-xl font-heading uppercase leading-tight mb-4 group-hover:text-primary transition-colors flex-grow">
                         {product.name}
                       </h3>
@@ -159,8 +195,12 @@ const Shop: React.FC = () => {
                         <div className="font-jersey text-2xl font-bold">
                           {product.discountPrice ? (
                             <div className="flex items-center gap-2">
-                              <span className="text-red-600">৳{product.discountPrice}</span>
-                              <span className="text-sm text-gray-400 line-through">৳{product.price}</span>
+                              <span className="text-red-600">
+                                ৳{product.discountPrice}
+                              </span>
+                              <span className="text-sm text-gray-400 line-through">
+                                ৳{product.price}
+                              </span>
                             </div>
                           ) : (
                             <span>৳{product.price}</span>
@@ -170,11 +210,15 @@ const Shop: React.FC = () => {
                     </div>
                   </Link>
                 ))}
-                
+
                 {filteredProducts.length === 0 && (
                   <div className="col-span-full py-32 text-center bg-white border-4 border-dashed border-gray-200">
-                    <h3 className="font-heading text-4xl text-gray-400 uppercase mb-4">No Kits Found</h3>
-                    <p className="font-bold text-gray-500">Try adjusting your filters or search query.</p>
+                    <h3 className="font-heading text-4xl text-gray-400 uppercase mb-4">
+                      No Kits Found
+                    </h3>
+                    <p className="font-bold text-gray-500">
+                      Try adjusting your filters or search query.
+                    </p>
                   </div>
                 )}
               </div>
