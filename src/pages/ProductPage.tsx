@@ -10,9 +10,9 @@ import {
     ArrowRight,
     ShieldCheck,
     ShoppingCart,
-    Zap
+    Zap,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ProductPage: React.FC = () => {
@@ -25,6 +25,38 @@ const ProductPage: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [activeImage, setActiveImage] = useState<string>("");
   const [displayImages, setDisplayImages] = useState<string[]>([]);
+  const imageContainerRef = useRef<HTMLDivElement | null>(null);
+  const [zoomState, setZoomState] = useState({
+    x: 0,
+    y: 0,
+    bgX: 0,
+    bgY: 0,
+    visible: false,
+  });
+
+  const updateZoomState = (clientX: number, clientY: number) => {
+    const rect = imageContainerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const y = Math.max(0, Math.min(clientY - rect.top, rect.height));
+    const bgX = (x / rect.width) * 100;
+    const bgY = (y / rect.height) * 100;
+
+    setZoomState({ x, y, bgX, bgY, visible: true });
+  };
+
+  const handleImageMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    updateZoomState(event.clientX, event.clientY);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    updateZoomState(touch.clientX, touch.clientY);
+  };
+
+  const hideZoom = () => setZoomState((prev) => ({ ...prev, visible: false }));
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -116,7 +148,16 @@ const ProductPage: React.FC = () => {
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 bg-white p-6 lg:p-12 sport-shadow border-4 border-black">
             {/* Images Column */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="aspect-[4/5] bg-gray-50 border-4 border-black relative overflow-hidden flex items-center justify-center">
+              <div
+                ref={imageContainerRef}
+                className="aspect-[4/5] bg-gray-50 border-4 border-black relative overflow-hidden flex items-center justify-center"
+                onMouseMove={handleImageMove}
+                onMouseLeave={hideZoom}
+                onMouseEnter={handleImageMove}
+                onTouchStart={handleTouchMove}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={hideZoom}
+              >
                 {product.discountPrice && (
                   <div className="absolute top-6 left-6 z-10 bg-primary text-black font-heading text-2xl uppercase px-4 py-1 transform -skew-x-12 border-2 border-black">
                     SALE
@@ -130,6 +171,33 @@ const ProductPage: React.FC = () => {
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
+                {activeImage && zoomState.visible && (
+                  <div
+                    className="absolute z-20 rounded-full border-4 border-black shadow-[0_8px_20px_rgba(0,0,0,0.25)] pointer-events-none"
+                    style={{
+                      width: 160,
+                      height: 160,
+                      left: Math.min(
+                        Math.max(zoomState.x - 80, 0),
+                        Math.max(
+                          0,
+                          (imageContainerRef.current?.clientWidth || 0) - 160,
+                        ),
+                      ),
+                      top: Math.min(
+                        Math.max(zoomState.y - 80, 0),
+                        Math.max(
+                          0,
+                          (imageContainerRef.current?.clientHeight || 0) - 160,
+                        ),
+                      ),
+                      backgroundImage: `url(${activeImage})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "220% 220%",
+                      backgroundPosition: `${zoomState.bgX}% ${zoomState.bgY}%`,
+                    }}
+                  />
+                )}
               </div>
 
               {/* Thumbnails */}
