@@ -94,6 +94,8 @@ const Shop: React.FC = () => {
               {/* Search */}
               <div className="relative w-full md:w-96">
                 <input
+                  id="shop-search"
+                  name="shopSearch"
                   type="text"
                   placeholder="SEARCH KITS OR NATIONS..."
                   value={searchQuery}

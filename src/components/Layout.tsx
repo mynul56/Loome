@@ -470,6 +470,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </p>
             <div className="flex">
               <input
+                id="footer-email"
+                name="footerEmail"
                 type="email"
                 placeholder="YOUR EMAIL"
                 className="bg-secondary text-white px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-primary font-bold uppercase text-sm"

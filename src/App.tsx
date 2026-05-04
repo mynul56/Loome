@@ -1,34 +1,34 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // Public Pages
-import Index from "./pages/Index";
-import Shop from "./pages/Shop";
 import About from "./pages/About";
+import Checkout from "./pages/Checkout";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
-import ProductPage from "./pages/ProductPage";
-import Checkout from "./pages/Checkout";
+import Index from "./pages/Index";
+import LiveScores from "./pages/LiveScores";
 import MyOrders from "./pages/MyOrders";
 import Nations from "./pages/Nations";
-import LiveScores from "./pages/LiveScores";
 import NotFound from "./pages/NotFound";
+import ProductPage from "./pages/ProductPage";
+import Shop from "./pages/Shop";
 
 // Auth Pages
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 // Admin Pages
 import AdminLayout from "./layouts/AdminLayout";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminProducts from "./pages/admin/Products";
-import AdminOrders from "./pages/admin/Orders";
-import AdminUsers from "./pages/admin/Users";
 import AdminCMS from "./pages/admin/CMS";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminOrders from "./pages/admin/Orders";
+import AdminProducts from "./pages/admin/Products";
+import AdminUsers from "./pages/admin/Users";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +37,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
@@ -50,16 +52,16 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
-          
+
           {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
           {/* Admin Routes */}
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminLayout />
               </ProtectedRoute>
             }

@@ -74,6 +74,7 @@ const Index: React.FC = () => {
             muted
             loop
             playsInline
+            preload="auto"
             className="w-full h-full object-cover grayscale"
           >
             <source

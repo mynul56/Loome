@@ -155,6 +155,8 @@ const Checkout: React.FC = () => {
                       Full Name *
                     </label>
                     <input
+                      id="checkout-full-name"
+                      name="customerName"
                       required
                       value={formData.customerName}
                       onChange={(e) =>
@@ -172,6 +174,8 @@ const Checkout: React.FC = () => {
                       Phone Number *
                     </label>
                     <input
+                      id="checkout-phone"
+                      name="phone"
                       required
                       value={formData.phone}
                       onChange={(e) =>
@@ -188,6 +192,8 @@ const Checkout: React.FC = () => {
                     Email Address (Optional)
                   </label>
                   <input
+                    id="checkout-email"
+                    name="email"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -202,6 +208,8 @@ const Checkout: React.FC = () => {
                     Complete Delivery Address *
                   </label>
                   <textarea
+                    id="checkout-delivery-address"
+                    name="deliveryAddress"
                     required
                     value={formData.deliveryAddress}
                     onChange={(e) =>
@@ -264,6 +272,8 @@ const Checkout: React.FC = () => {
                     Additional Notes
                   </label>
                   <textarea
+                    id="checkout-additional-note"
+                    name="additionalNote"
                     value={formData.additionalNote}
                     onChange={(e) =>
                       setFormData({
