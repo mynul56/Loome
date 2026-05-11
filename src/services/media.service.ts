@@ -1,4 +1,10 @@
 const signedUrlCache = new Map<string, string>();
+const apiBaseUrl = (
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) || ""
+).replace(/\/$/, "");
+
+const withApiBase = (path: string) =>
+  apiBaseUrl ? `${apiBaseUrl}${path}` : path;
 
 const isDirectUrl = (value: string) => {
   if (!value) return false;
@@ -12,7 +18,9 @@ const isDirectUrl = (value: string) => {
 };
 
 const fetchSignedUrl = async (endpoint: string, path: string) => {
-  const response = await fetch(`${endpoint}?path=${encodeURIComponent(path)}`);
+  const response = await fetch(
+    `${withApiBase(endpoint)}?path=${encodeURIComponent(path)}`,
+  );
   if (!response.ok) {
     throw new Error("Failed to resolve signed URL");
   }
@@ -25,10 +33,13 @@ export const mediaService = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/media/upload/product-image", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      withApiBase("/api/media/upload/product-image"),
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -43,7 +54,7 @@ export const mediaService = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/media/upload/home-video", {
+    const response = await fetch(withApiBase("/api/media/upload/home-video"), {
       method: "POST",
       body: formData,
     });
