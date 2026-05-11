@@ -91,7 +91,7 @@ export const productService = {
     if (hasSupabaseConfig && supabase) {
       const { data, error } = await supabase
         .from("products")
-        .update(stripUndefined(mapProductToRow(updates)))
+        .select("*")
         .eq("id", id)
         .maybeSingle();
 
@@ -152,7 +152,7 @@ export const productService = {
     if (hasSupabaseConfig && supabase) {
       const { data, error } = await supabase
         .from("products")
-        .update(mapProductToRow(updates))
+        .update(stripUndefined(mapProductToRow(updates)))
         .eq("id", id)
         .select("*")
         .single();
