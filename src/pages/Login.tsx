@@ -103,13 +103,6 @@ const Login: React.FC = () => {
               </Link>
             </p>
           </div>
-
-          {/* Admin Demo Note */}
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-100 text-xs text-center text-gray-500">
-            <p>
-              <strong>Demo Admin:</strong> admin@loome.com / admin
-            </p>
-          </div>
         </div>
       </div>
     </Layout>
