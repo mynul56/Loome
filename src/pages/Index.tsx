@@ -87,14 +87,14 @@ const Index: React.FC = () => {
         </div>
 
         {/* Diagonal Cut Layout */}
-        <div className="relative z-10 w-full px-6 lg:px-12 max-w-[1800px] mx-auto mt-20">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-12 max-w-[1800px] mx-auto mt-12 sm:mt-16 lg:mt-20">
           <div className="max-w-4xl space-y-6">
-            <div className="inline-block bg-primary text-black font-bold uppercase tracking-widest px-4 py-1 text-sm transform -skew-x-12 animate-fade-in-up mb-4">
+            <div className="inline-block bg-primary text-black font-bold uppercase tracking-widest px-3 sm:px-4 py-1 text-xs sm:text-sm transform -skew-x-12 animate-fade-in-up mb-4">
               {cms.heroSubtitle.replace("\\n", " ")}
             </div>
 
             <h1
-              className="text-6xl md:text-8xl lg:text-[9rem] leading-[0.85] font-heading text-white uppercase tracking-tighter animate-fade-in-up"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-[9rem] leading-[0.9] sm:leading-[0.85] font-heading text-white uppercase tracking-tighter animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
               {cms.heroTitle.split("\\n").map((line, i) => (
@@ -113,7 +113,7 @@ const Index: React.FC = () => {
             >
               <Link
                 to="/shop"
-                className="inline-flex items-center gap-4 bg-white text-black font-heading text-2xl uppercase px-8 py-4 hover:bg-primary transition-all transform hover:translate-x-2"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-3 sm:gap-4 bg-white text-black font-heading text-lg sm:text-xl md:text-2xl uppercase px-6 sm:px-8 py-3 sm:py-4 hover:bg-primary transition-all transform hover:translate-x-2"
               >
                 {cms.heroButtonText} <ArrowRight className="w-8 h-8" />
               </Link>
@@ -127,7 +127,7 @@ const Index: React.FC = () => {
       </section>
 
       {/* LATEST DROPS TICKER */}
-      <div className="w-full bg-primary text-black font-heading text-2xl uppercase overflow-hidden border-y-4 border-black py-3">
+      <div className="w-full bg-primary text-black font-heading text-base sm:text-xl md:text-2xl uppercase overflow-hidden border-y-4 border-black py-2 sm:py-3">
         <div className="flex whitespace-nowrap animate-[slide_20s_linear_infinite]">
           <span className="mx-4">• WORLD CUP 2026 KITS OUT NOW</span>
           <span className="mx-4">• AUTHENTIC REPLICAS</span>
@@ -142,14 +142,14 @@ const Index: React.FC = () => {
       </div>
 
       {/* FEATURED COLLECTION */}
-      <section className="py-24 bg-background">
+      <section className="py-20 sm:py-24 bg-background">
         <div className="px-6 lg:px-12 max-w-[1800px] mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b-4 border-black pb-4">
             <div>
-              <h2 className="text-5xl md:text-7xl font-heading uppercase text-black">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-heading uppercase text-black">
                 Starting XI
               </h2>
-              <p className="text-xl font-bold text-gray-500 uppercase mt-2">
+              <p className="text-base sm:text-lg md:text-xl font-bold text-gray-500 uppercase mt-2">
                 {cms.bannerText}
               </p>
             </div>
@@ -232,7 +232,7 @@ const Index: React.FC = () => {
       </div>
 
       {/* AGGRESSIVE PROMO SECTION */}
-      <section className="w-full bg-black text-white min-h-[85vh] flex items-center relative overflow-hidden py-32">
+      <section className="w-full bg-black text-white min-h-[85vh] flex items-center relative overflow-hidden py-24 sm:py-32">
         {/* Animated Abstract field lines */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
           {/* Breathing center circle */}
@@ -263,19 +263,19 @@ const Index: React.FC = () => {
         </div>
 
         <div className="relative z-10 px-6 lg:px-12 max-w-[1800px] mx-auto text-center w-full">
-          <Zap className="w-24 h-24 text-primary mx-auto mb-10 animate-bounce" />
-          <h2 className="text-7xl md:text-[10rem] font-heading uppercase mb-10 leading-[0.85] tracking-tighter">
+          <Zap className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-primary mx-auto mb-10 animate-bounce" />
+          <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-heading uppercase mb-8 sm:mb-10 leading-[0.9] sm:leading-[0.85] tracking-tighter">
             Built For
             <br />
             <span className="text-primary">The Pitch</span>
           </h2>
-          <p className="text-xl md:text-3xl font-bold uppercase text-gray-400 max-w-4xl mx-auto mb-16 tracking-wider">
+          <p className="text-base sm:text-xl md:text-3xl font-bold uppercase text-gray-400 max-w-4xl mx-auto mb-12 sm:mb-16 tracking-wider">
             {cms.aboutText}
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <Link
               to="/shop"
-              className="group bg-primary text-black font-heading text-3xl md:text-5xl uppercase px-16 py-8 transform -skew-x-12 hover:bg-white transition-all hover:scale-105 sport-shadow"
+              className="group bg-primary text-black font-heading text-xl sm:text-3xl md:text-5xl uppercase px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 transform -skew-x-12 hover:bg-white transition-all hover:scale-105 sport-shadow"
             >
               <span className="block transform skew-x-12 group-hover:tracking-widest transition-all duration-300">
                 Gear Up Now
