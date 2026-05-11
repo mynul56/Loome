@@ -1,22 +1,41 @@
-const express = require('express');
+const express = require("express");
+const { supabase } = require("../services/supabase");
+
 const router = express.Router();
 
-// Sample products data
-const products = [
-  { id: 1, name: 'Classic Shirt', price: 120, description: 'Timeless elegance.' },
-  { id: 2, name: 'Luxury Polo', price: 150, description: 'Understated luxury.' }
-];
-
 // Get all products
-router.get('/', (req, res) => {
-  res.json(products);
+router.get("/", async (req, res) => {
+  try {
+    const { data, error } = await supabase.from("products").select("*");
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error." });
+  }
 });
 
 // Get product by ID
-router.get('/:id', (req, res) => {
-  const product = products.find(p => p.id === parseInt(req.params.id));
-  if (!product) return res.status(404).json({ error: 'Product not found' });
-  res.json(product);
+router.get("/:id", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", req.params.id)
+      .maybeSingle();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    if (!data) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error." });
+  }
 });
 
 module.exports = router;

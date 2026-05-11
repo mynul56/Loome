@@ -1,26 +1,14 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const shouldUseMongo = process.env.USE_MONGODB === "true";
-
-if (shouldUseMongo) {
-  if (!process.env.MONGODB_URI) {
-    console.warn("MONGODB_URI is not set; skipping MongoDB connection.");
-  } else {
-    mongoose
-      .connect(process.env.MONGODB_URI)
-      .then(() => {
-        console.log("Connected to MongoDB");
-      })
-      .catch((err) => {
-        console.error("MongoDB connection error:", err);
-      });
-  }
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn(
+    "Supabase env vars are missing; check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
+  );
 } else {
-  console.log("MongoDB disabled (USE_MONGODB != true).");
+  console.log("Supabase configured.");
 }
 
 app.use(express.json());

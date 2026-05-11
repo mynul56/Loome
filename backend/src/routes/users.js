@@ -1,21 +1,44 @@
-const express = require('express');
+const express = require("express");
+const { supabase } = require("../services/supabase");
+
 const router = express.Router();
 
-// Sample users data
-const users = [
-  { id: 1, name: 'John Doe', email: 'john@example.com' }
-];
-
 // Get all users
-router.get('/', (req, res) => {
-  res.json(users);
+router.get("/", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, name, email, created_at");
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error." });
+  }
 });
 
 // Get user by ID
-router.get('/:id', (req, res) => {
-  const user = users.find(u => u.id === parseInt(req.params.id));
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json(user);
+router.get("/:id", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, name, email, created_at")
+      .eq("id", req.params.id)
+      .maybeSingle();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    if (!data) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error." });
+  }
 });
 
 module.exports = router;

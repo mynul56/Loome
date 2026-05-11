@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "migrate:mongodb-to-supabase": "node src/services/migrateToSupabase.js"
   },
   "author": "Loomé",
   "license": "MIT",
